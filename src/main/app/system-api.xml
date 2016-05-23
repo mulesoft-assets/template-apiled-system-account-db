@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" 
+xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" 
+xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" 
+	xmlns="http://www.mulesoft.org/schema/mule/core" 
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" 
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:spring="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+	<context:property-placeholder location="common.properties, mule.${mule.env}.properties" />
+	
+	<configuration doc:name="Configuration">
+     	<expression-language>
+         	<global-functions>
+	             def escapeSQL(data) {
+	                 return org.apache.commons.lang.StringEscapeUtils.escapeSql(data)
+	             }
+         	</global-functions>
+     	</expression-language>
+	</configuration>
+	
+	
+    <http:listener-config name="system-api-httpListenerConfig" host="0.0.0.0" port="${http.port}" doc:name="HTTP Listener Configuration"/>
+    <db:generic-config name="Database" url="${db.jdbcUrl}" driverClassName="com.mysql.jdbc.Driver" doc:name="Database instance" doc:description="Your DB instance"/>
+    <apikit:config name="system-api-config" raml="system-api.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
+    <flow name="system-api-main">
+        <http:listener config-ref="system-api-httpListenerConfig" path="/api/*" doc:name="HTTP"/>
+        <apikit:router config-ref="system-api-config" doc:name="APIkit Router"/>
+        <exception-strategy ref="system-api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="get:/accounts:system-api-config">
+        <dw:transform-message doc:name="whereClause as string in flowVar">
+            <dw:set-variable variableName="whereClause"><![CDATA[%dw 1.0
+%output application/java
+%var fields = {     
+	"name"             : "Name",
+	"lastmodifieddate" : "LastModifiedDate"
+}
+%type sqldate = :string { format: "YYYY-MM-dd HH:mm:ss" }
+---
+using (params = inboundProperties.'http.query.params')
+{
+	
+	 
+	// filtering
+	(name:            'AND Name LIKE \'%' ++ escapeSQL(params.name) ++ '%\'') when params.name != null,
+	(modifiedBefore:  'AND LastModifiedDate < \'' ++ (((escapeSQL(params.modifiedBefore) as :datetime)  >> |+00:00|) as :sqldate) ++ '\'') when params.modifiedBefore != null,
+	(modifiedAfter:   'AND LastModifiedDate > \'' ++ (((escapeSQL(params.modifiedAfter) as :datetime)  >> |+00:00|) as :sqldate) ++ '\'') when params.modifiedAfter != null,
+	// ordering
+	(orderBy:         'ORDER BY ' ++ fields[(lower escapeSQL(params.'orderBy'))] ++ (' DESC' when (params.order != null and params.order == "desc") otherwise " ASC"  )) when params.'orderBy' != null,
+	
+	// pagination
+	(limit:           'LIMIT ' ++ escapeSQL(params.maxResults) ++ ' OFFSET ' ++ ( escapeSQL(params.offset) when (params.offset != null and params.offset >= 0) otherwise 0)) when params.maxResults != null
+}
+pluck $
+joinBy ' '
+]]></dw:set-variable>
+        </dw:transform-message>
+
+        <db:select config-ref="Database" doc:name="SELECT">
+            <db:dynamic-query><![CDATA[SELECT Id, Name, BillingStreet, BillingCity, BillingPostalCode, BillingState, BillingCountry, ShippingStreet, ShippingCity, ShippingPostalCode, ShippingState, ShippingCountry, LastModifiedDate, LastModifiedById FROM Account WHERE Id LIKE '%' #[whereClause]]]></db:dynamic-query>
+
+
+
+        </db:select>
+
+<!--         <db:select config-ref="Database" doc:name="Database"> -->
+<!--             <db:dynamic-query><![CDATA[SELECT Id, Name, BillingStreet, BillingCity, BillingPostalCode, BillingState, BillingCountry, ShippingStreet, ShippingCity, ShippingPostalCode, ShippingState, ShippingCountry, AccountNumber, LastModifiedDate, LastModifiedById FROM Account WHERE (Id LIKE '%') #[whereClause]]]></db:dynamic-query> -->
+<!--         </db:select> -->
+        <dw:transform-message doc:name="DB Account to sAPI Account">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+payload map {
+	id                  : $.Id,
+	nativeId            : $.Id,
+	name                : $.Name,
+	billingStreet       : $.BillingStreet,
+	billingCity         : $.BillingCity,
+	billingState        : $.BillingState,
+	billingPostalCode   : $.BillingPostalCode,
+	billingCountry      : $.BillingCountry,
+	shippingStreet      : $.ShippingStreet,
+	shippingCity        : $.ShippingCity,
+	shippingState       : $.ShippingState,
+	shippingPostalCode  : $.ShippingPostalCode,
+	shippingCountry     : $.ShippingCountry,
+	lastModifiedDate    : $.LastModifiedDate
+}]]></dw:set-payload>
+        </dw:transform-message>
+    </flow>
+    <flow name="post:/accounts:application/json:system-api-config">
+        <set-property propertyName="Content-Type" value="application/json" doc:name="Set Content-Type"/>
+        <set-variable variableName="id" value="#[java.util.UUID.randomUUID().toString()]" doc:name="Compute ID"/>
+        <dw:transform-message doc:name="Map input to Salesforce Account">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	Id                 : flowVars.id,
+	Name               : payload.name,
+	BillingStreet      : payload.billingStreet,
+	BillingCity        : payload.billingCity,
+	BillingState       : payload.billingState,
+	BillingPostalCode  : payload.billingPostalCode,
+	BillingCountry     : payload.billingCountry,
+	ShippingStreet     : payload.shippingStreet,
+	ShippingCity       : payload.shippingCity,
+	ShippingState      : payload.shippingState,
+	ShippingPostalCode : payload.shippingPostalCode,
+	ShippingCountry    : payload.shippingCountry,
+	Phone              : payload.phone
+}]]></dw:set-payload>
+            <dw:set-variable variableName="input"><![CDATA[%dw 1.0
+%output application/java
+---
+payload]]></dw:set-variable>
+        </dw:transform-message>
+        <db:insert config-ref="Database" doc:name="INSERT">
+            <db:parameterized-query><![CDATA[INSERT INTO Account (
+	Id,
+	BillingCity,
+	BillingCountry,
+	BillingPostalCode,
+	BillingState,
+	BillingStreet,
+	Fax,
+	Phone,
+	LastModifiedDate,
+	LastModifiedById,
+	Name,
+	ShippingCity,
+	ShippingCountry,
+	ShippingPostalCode,
+	ShippingState,
+	ShippingStreet
+) VALUES (
+	#[flowVars['Id']],
+	#[payload['BillingCity']],
+	#[payload['BillingCountry']],
+	#[payload['BillingPostalCode']],
+	#[payload['BillingState']],
+	#[payload['BillingStreet']],
+	#[payload['Fax']],
+    #[payload['Phone']],
+	CURRENT_TIMESTAMP(),
+	CURRENT_USER(),
+	#[payload['Name']],
+	#[payload['ShippingCity']],
+	#[payload['ShippingCountry']],
+	#[payload['ShippingPostalCode']],
+	#[payload['ShippingState']],
+	#[payload['ShippingStreet']]
+)]]></db:parameterized-query>
+
+
+
+        </db:insert>
+        <choice doc:name="Was Account inserted?">
+            <when expression="#[payload == 1]">
+                <set-property propertyName="location" value="#[ 'http://' + '${api.domain}' + ':' + '${http.port}' + '${api.basePath}' + '/accounts/' + flowVars.id ]" doc:name="Location property"/>
+                <dw:transform-message doc:name="Build Response">
+                    <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	id: flowVars.id,
+	name: flowVars.input.name
+}]]></dw:set-payload>
+                </dw:transform-message>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="#[400]" doc:name="Bad Request"/>
+                <set-payload doc:name="Set Payload" value="{ &quot;message&quot;: &quot;Failed to insert Account&quot; }"/>
+            </otherwise>
+        </choice>
+
+    </flow>
+    <flow name="get:/accounts/{id}:system-api-config">
+
+        <db:select config-ref="Database" doc:name="SELECT Account">
+            <db:parameterized-query><![CDATA[SELECT Id, Name, BillingStreet, BillingCity, BillingPostalCode, BillingState, BillingCountry, ShippingStreet, ShippingCity, ShippingPostalCode, ShippingState, ShippingCountry, LastModifiedDate, LastModifiedById FROM Account WHERE Id = #[message.inboundProperties["http.uri.params"].id]]]></db:parameterized-query>
+
+
+        </db:select>
+        <logger message="SELECT: #[payload]" level="INFO" doc:name="Logger"/>
+        <choice doc:name="Does the Account exist?">
+            <when expression="#[payload != empty]">
+                <dw:transform-message doc:name="DB Account to sAPI Account">
+                    <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	id                  : payload[0].Id,
+	nativeId            : payload[0].Id,
+	name                : payload[0].Name,
+	billingStreet       : payload[0].BillingStreet,
+	billingCity         : payload[0].BillingCity,
+	billingState        : payload[0].BillingState,
+	billingPostalCode   : payload[0].BillingPostalCode,
+	billingCountry      : payload[0].BillingCountry,
+	shippingStreet      : payload[0].ShippingStreet,
+	shippingCity        : payload[0].ShippingCity,
+	shippingState       : payload[0].ShippingState,
+	shippingPostalCode  : payload[0].ShippingPostalCode,
+	shippingCountry     : payload[0].ShippingCountry,
+	lastModifiedDate    : payload[0].LastModifiedDate
+}]]></dw:set-payload>
+                </dw:transform-message>
+
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="#[404]" doc:name="Resource Not Found"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Account not found"/>
+            </otherwise>
+        </choice>
+    </flow>
+    <flow name="put:/accounts/{id}:application/json:system-api-config">
+        <set-property propertyName="Content-Type" value="application/json" doc:name="Set Content Type"/>
+        <set-variable variableName="input" value="#[payload]" encoding="UTF-8" mimeType="application/json" doc:name="Save data into flowVars.input"/>
+        <db:select config-ref="Database" doc:name="SELECT Account">
+            <db:parameterized-query><![CDATA[SELECT Id FROM Account WHERE Id = #[message.inboundProperties["http.uri.params"].id]]]></db:parameterized-query>
+        </db:select>
+        <choice doc:name="Does the Account exist?">
+            <when expression="#[ payload != empty ]">
+                <dw:transform-message doc:name="sAPI Account to DB Account">
+                    <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	Name              : flowVars.input.name,
+	BillingStreet     : flowVars.input.billingStreet,
+	BillingCity       : flowVars.input.billingCity,
+	BillingState      : flowVars.input.billingState,
+	BillingPostalCode : flowVars.input.billingPostalCode,
+	BillingCountry    : flowVars.input.billingCountry,
+	ShippingStreet    : flowVars.input.shippingStreet,
+	ShippingCity      : flowVars.input.shippingCity,
+	ShippingState     : flowVars.input.shippingState,
+	ShippingPostalCode: flowVars.input.shippingPostalCode,
+	ShippingCountry   : flowVars.input.shippingCountry,
+	Phone             : flowVars.input.phone
+}]]></dw:set-payload>
+                </dw:transform-message>
+                <db:update config-ref="Database" doc:name="UPDATE Account">
+                    <db:parameterized-query><![CDATA[UPDATE Account 
+SET 
+	Name               = #[payload.Name],
+	BillingStreet      = #[payload.BillingStreet],
+	BillingCity        = #[payload.BillingCity],
+	BillingState       = #[payload.BillingState],
+	BillingPostalCode  = #[payload.BillingPostalCode],
+	BillingCountry     = #[payload.BillingCountry],
+	ShippingStreet     = #[flowVars.ShippingStreet],
+	ShippingCity       = #[payload.ShippingCity],
+	ShippingState      = #[payload.ShippingState],
+	ShippingPostalCode = #[payload.ShippingPostalCode],
+	ShippingCountry    = #[payload.ShippingCountry],
+	Phone              = #[payload.Phone]
+WHERE Id = #[flowVars.id]]]></db:parameterized-query>
+                </db:update>
+                <choice doc:name="Has the Account been updated?">
+                    <when expression="#[payload == 1]">
+                        <logger message="UPDATE: #[payload]" level="INFO" doc:name="Log UPDATE"/>
+                    </when>
+                    <otherwise>
+                        <set-property propertyName="http.status" value="#[400]" doc:name="Bad Request"/>
+                        <set-payload value="{ &quot;message&quot;: &quot;Failed to update Account&quot; }" doc:name="Bad Request"/>
+                    </otherwise>
+                </choice>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="#[404]" doc:name="Resource Not Found"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Resource not found"/>
+            </otherwise>
+        </choice>
+
+    </flow>
+    <flow name="delete:/accounts/{id}:system-api-config">
+        <db:select config-ref="Database" doc:name="Database">
+            <db:parameterized-query><![CDATA[SELECT Id FROM Account WHERE Id = #[message.inboundProperties.'http.uri.params'.id]]]></db:parameterized-query>
+        </db:select>
+        <choice doc:name="Does the Account exist?">
+            <when expression="#[payload != empty]">
+                <db:delete config-ref="Database" doc:name="DELETE Account">
+                    <db:parameterized-query><![CDATA[DELETE FROM Account WHERE Id = #[message.inboundProperties.'http.uri.params'.id]]]></db:parameterized-query>
+                </db:delete>
+                <choice doc:name="Has the Account been deleted?">
+                    <when expression="#[payload == 1]">
+                        <logger message="UPDATE: #[payload]" level="INFO" doc:name="Log UPDATE"/>
+                    </when>
+                    <otherwise>
+                        <set-property propertyName="http.status" value="#[400]" doc:name="Bad Request"/>
+                        <set-payload value="{ &quot;message&quot;: &quot;Failed to delete Account&quot; }" doc:name="Bad Request"/>
+                    </otherwise>
+                </choice>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="#[404]" doc:name="Resource Not Found"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Resource not found"/>
+            </otherwise>
+        </choice>
+
+    </flow>
+
+    <apikit:mapping-exception-strategy name="system-api-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>

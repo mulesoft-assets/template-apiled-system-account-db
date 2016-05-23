@@ -1,0 +1,21 @@
+{
+  "id": "074a8d46-1db3-11e6-8d57-54ee7534a10b",
+  "nativeId": "",
+  "name": "Jason Bourne",
+  "phone": "1-(318)596-8473",
+  "fax": "1-(318)596-8474",
+  "email": "test@example.com",
+  "billingStreet": "Pleasure 4598",
+  "billingCity": "Shreveport",
+  "billingState": "Louisiana",
+  "billingPostalCode": "71105",
+  "billingCountry": "United States",
+  "shippingStreet": "Autumn Leaf 3",
+  "shippingCity": "Jackson",
+  "shippingState": "Mississippi",
+  "shippingPostalCode": "39204",
+  "shippingCountry": "United States",
+  "createdDate" : "2016-03-24T15:00:00.000Z",
+  "lastModifiedDate" : "2016-03-24T15:00:00.000Z",
+  "lastModifiedById" : "123456"
+}

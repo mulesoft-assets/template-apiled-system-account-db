@@ -1,0 +1,77 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "id": "http://jsonschema.net/id",
+      "type": "string"
+    },
+    "nativeId": {
+      "id": "http://jsonschema.net/nativeId",
+      "type": "string"
+    },
+    "name": {
+      "id": "http://jsonschema.net/name",
+      "type": "string"
+    },
+    "phone": {
+      "id": "http://jsonschema.net/phone",
+      "type": "string"
+    },
+    "email": {
+      "id": "http://jsonschema.net/email",
+      "type": "string"
+    },
+    "createdDate": {
+      "id": "http://jsonschema.net/createdDate",
+      "type": "string"
+    },
+    "billingStreet": {
+      "id": "http://jsonschema.net/billingStreet",
+      "type": "string"
+    },
+    "billingCity": {
+      "id": "http://jsonschema.net/billingCity",
+      "type": "string"
+    },
+    "billingState": {
+      "id": "http://jsonschema.net/billingState",
+      "type": "string"
+    },
+    "billingPostalCode": {
+      "id": "http://jsonschema.net/billingPostalCode",
+      "type": "string"
+    },
+    "billingCountry": {
+      "id": "http://jsonschema.net/billingCountry",
+      "type": "string"
+    },
+    "shippingStreet": {
+      "id": "http://jsonschema.net/shippingStreet",
+      "type": "string"
+    },
+    "shippingCity": {
+      "id": "http://jsonschema.net/shippingCity",
+      "type": "string"
+    },
+    "shippingState": {
+      "id": "http://jsonschema.net/shippingState",
+      "type": "string"
+    },
+    "shippingPostalCode": {
+      "id": "http://jsonschema.net/shippingPostalCode",
+      "type": "string"
+    },
+    "shippingCountry": {
+      "id": "http://jsonschema.net/shippingCountry",
+      "type": "string"
+    },
+    "lastModifiedDate": {
+      "id": "http://jsonschema.net/lastModifiedDate",
+      "type": "string"
+    },
+    "lastModifiedById": {
+      "id": "http://jsonschema.net/lastModifiedById",
+      "type": "string"
+    }
+  }
+}

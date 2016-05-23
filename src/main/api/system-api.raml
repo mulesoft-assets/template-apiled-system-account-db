@@ -1,0 +1,90 @@
+#%RAML 0.8
+title: System API
+version: v1.0
+
+schemas:
+  - account: !include schemas/account_schema.json
+
+traits: !include ./traits/trait-collection.yaml
+
+/accounts:
+  displayName: Accounts
+  description: |
+    Working with accounts:
+    * Retrieving all accounts
+    * Creating accounts
+  get:
+    description: |
+      Retrieve all the Accounts.
+    is: [ collection ]
+    queryParameters:
+      name:
+        displayName: The account name
+        minLength: 0
+        maxLength: 255
+      modifiedAfter:
+        displayName: Only those modified after this date
+        minLength: 23
+        maxLength: 29
+        example: 2016-04-28T14:00:00.000Z
+      modifiedBefore:
+        displayName: Only those modified before this date
+        minLength: 23
+        maxLength: 29
+        example: 2016-05-28T14:00:00.000Z
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include ./examples/account_collection_example.json
+  post:
+    description: |
+      Create a new Account
+    body:
+      application/json:
+        schema: account
+        example: !include ./examples/account_post_request_example.json
+    responses:
+      201:
+        description: Created
+        body:
+          application/json:
+            example: !include ./examples/account_post_response_example.json
+  /{id}:
+    displayName: Account ID
+    uriParameters:
+      id:
+        type: string
+        description: Represents the account ID of native system
+    get:
+      description: Get Account by ID
+      responses:
+        200:
+          body:
+            application/json:
+              schema: account
+              example: !include ./examples/account_example.json
+        400:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "Bad message"
+                }
+        404:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "Resource not found"
+                }
+    put:
+      body:
+        application/json:
+          schema: account
+          example: !include ./examples/account_example.json
+      responses:
+        204:
+    delete:
+      responses:
+        204:
