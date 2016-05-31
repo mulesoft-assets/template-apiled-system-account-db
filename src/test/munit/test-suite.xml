@@ -44,8 +44,9 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
 		<dbserver:stop-db-server config-ref="test-db" doc:name="Stop DB Server" />
 	</munit:after-suite>
     <munit:after-test name="test-suiteAfter_Test" description="After tests actions">
-        <db:delete config-ref="Database" doc:name="DELETE all">
+        <db:delete config-ref="Database" doc:name="DELETE all Accounts">
             <db:parameterized-query><![CDATA[DELETE FROM Account;]]></db:parameterized-query>
+
         </db:delete>
     </munit:after-test>
 
@@ -53,14 +54,16 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
 	<munit:test name="test-suite-get:/accounts:system-api-configTest" description="Test" >
         <mock:when messageProcessor=".*:.*" doc:name="Mock SELECT">
             <mock:with-attributes>
-                <mock:with-attribute name="doc:name" whereValue="#['SELECT']"/>
+                <mock:with-attribute name="doc:name" whereValue="#['SELECT Accounts']"/>
             </mock:with-attributes>
             <mock:then-return payload="#[[{&quot;Id&quot;:&quot;2e1c66e5-1db8-11e6-8d57-54ee7534a10b&quot;,&quot;Name&quot;:&quot;Eduard Walker&quot;,&quot;BillingStreet&quot;:&quot;Pleasure 4598&quot;,&quot;BillingCity&quot;:&quot;Shreveport&quot;,&quot;BillingState&quot;:&quot;Louisiana&quot;,&quot;BillingPostalCode&quot;:&quot;71105&quot;,&quot;BillingCountry&quot;:&quot;United States&quot;,&quot;ShippingStreet&quot;:&quot;Autumn Leaf 3&quot;,&quot;ShippingCity&quot;:&quot;Jackson&quot;,&quot;ShippingState&quot;:&quot;Mississippi&quot;,&quot;ShippingPostalCode&quot;:&quot;39204&quot;,&quot;ShippingCountry&quot;:&quot;United States&quot;,&quot;LastModifiedDate&quot;:&quot;2016-05-19T13:52:36&quot;},{&quot;Id&quot;:&quot;7d940c44-1db7-11e6-8d57-54ee7534a10b&quot;,&quot;Name&quot;:&quot;Tom Walkers&quot;,&quot;BillingStreet&quot;:&quot;Pleasure 4598&quot;,&quot;BillingCity&quot;:&quot;Shreveport&quot;,&quot;BillingState&quot;:&quot;Louisiana&quot;,&quot;BillingPostalCode&quot;:&quot;71105&quot;,&quot;BillingCountry&quot;:&quot;United States&quot;,&quot;ShippingStreet&quot;:&quot;Autumn Leaf 3&quot;,&quot;ShippingCity&quot;:&quot;Jackson&quot;,&quot;ShippingState&quot;:&quot;Mississippi&quot;,&quot;ShippingPostalCode&quot;:&quot;39204&quot;,&quot;ShippingCountry&quot;:&quot;United States&quot;,&quot;LastModifiedDate&quot;:&quot;2016-05-19T13:47:40&quot;}]]"/>
+
         </mock:when>
         <mock:spy messageProcessor=".*:.*" doc:name="Spy">
             <mock:with-attributes>
-                <mock:with-attribute name="doc:name" whereValue="#['whereClause as string in flowVar']"/>
+                <mock:with-attribute name="doc:name" whereValue="#['Build whereClause as string in flowVar']"/>
             </mock:with-attributes>
+
             <mock:assertions-after-call>
                 <munit:assert-on-equals message="The whereClause does not match!" expectedValue="AND Name LIKE '%walker%' AND LastModifiedDate &lt; '2016-05-20 00:00:00' AND LastModifiedDate &gt; '2016-05-18 00:00:00' ORDER BY LastModifiedDate DESC LIMIT 5 OFFSET 0" actualValue="#[flowVars.whereClause]" doc:name="Assert whereClause is correct"/>
             </mock:assertions-after-call>
@@ -77,6 +80,7 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
 ('6f6e73d9-1db5-11e6-8d57-54ee7534a10b','Shreveport','United States','71105','Louisiana','Pleasure 4598','1-(318)596-8475','2016-05-19 13:32:57','root@localhost','Antonio Silva','1-(318)596-8473','Jackson','United States','39204','Mississippi','Autumn Leaf 3'), 
 ('7d940c44-1db7-11e6-8d57-54ee7534a10b','Shreveport','United States','71105','Louisiana','Pleasure 4598','1-(318)596-8475','2016-05-19 13:47:40','root@localhost','Tom Walkers','1-(318)596-8473','Jackson','United States','39204','Mississippi','Autumn Leaf 3'), 
 ('9849e1a2-1db7-11e6-8d57-54ee7534a10b','Shreveport','United States','71105','Louisiana','Pleasure 4598','1-(318)596-8475','2016-05-19 13:48:25','root@localhost','Andreas Fung','1-(318)596-8473','Jackson','United States','39204','Mississippi','Autumn Leaf 3');]]></db:parameterized-query>
+
         </db:insert>
         <http:request config-ref="HTTP_Request_Configuration" path="/accounts" method="GET" doc:name="GET">
             <http:request-builder>
@@ -90,7 +94,7 @@ http://www.mulesoft.org/schema/mule/mock http://www.mulesoft.org/schema/mule/moc
             </http:request-builder>
         </http:request>
         <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(200))]" doc:name="Assert that http.status eq 200"/>
-        <dw:transform-message doc:name="Transform to Java">
+        <dw:transform-message doc:name="Transform response  to Java">
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 ---
@@ -100,7 +104,7 @@ payload map $.id]]></dw:set-payload>
         <munit:assert-on-equals message="There should be particular Accounts retrieved" expectedValue="#[[&quot;2e1c66e5-1db8-11e6-8d57-54ee7534a10b&quot;, &quot;7d940c44-1db7-11e6-8d57-54ee7534a10b&quot;]]" actualValue="#[payload]" doc:name="There should be particular Accounts retrieved"/>
 	</munit:test>
 	<munit:test	name="test-suite-post:/accounts:application/json:system-api-configTest"	description="Test" >
-        <dw:transform-message doc:name="Data">
+        <dw:transform-message doc:name="Set payload">
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
@@ -122,69 +126,15 @@ payload map $.id]]></dw:set-payload>
         </dw:transform-message>
         <http:request config-ref="HTTP_Request_Configuration" path="/accounts" method="POST" doc:name="POST"/>
         <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(201))]" doc:name="Assert that http.status eq 201"/>
-        <db:select config-ref="Database" doc:name="SELECT">
+        <db:select config-ref="Database" doc:name="SELECT Accounts">
             <db:parameterized-query><![CDATA[SELECT * FROM Account]]></db:parameterized-query>
+
         </db:select>
         <munit:assert-on-equals message="There should be one account in the DB." expectedValue="#[1]" actualValue="#[payload.size()]" doc:name="There should be one account in the DB"/>
 	</munit:test>
 	<munit:test name="test-suite-get:/accounts/id:system-api-configTest"	description="Test" >
-        <dw:transform-message doc:name="Data to DB">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/java
----
-{
-	  "Id" : "12345",
-	  "Name": "Eduard Walker",
-	  "Phone": "1-(318)596-8473",
-	  "Email": "ewalker0@liveinternet.ru",
-	  "BillingStreet": "Pleasure 4598",
-	  "BillingCity": "Shreveport",
-	  "BillingState": "Louisiana",
-	  "BillingPostalCode": "71105",
-	  "BillingCountry": "United States",
-	  "ShippingStreet": "Autumn Leaf 3",
-	  "ShippingCity": "Jackson",
-	  "ShippingState": "Mississippi",
-	  "ShippingPostalCode": "39204",
-	  "ShippingCountry": "United States"
-}]]></dw:set-payload>
-        </dw:transform-message>
-        <db:insert config-ref="Database" doc:name="INSERT">
-            <db:parameterized-query><![CDATA[INSERT INTO Account ( 
-	Id,   
-	BillingCity,   
-	BillingCountry, 
-	BillingPostalCode,  
-	BillingState,  
-	BillingStreet,  
-	Fax,  
-	LastModifiedDate,  
-	Name,  
-	Phone,  
-	ShippingCity,  
-	ShippingCountry,  
-	ShippingPostalCode, 
-	ShippingState,  
-	ShippingStreet
-) VALUES (  
-	#[payload.Id],   
-	#[payload.BillingCity],  
-	#[payload.BillingCountry],   
-	#[payload.BillingPostalCode],  
-	#[payload.BillingState],   
-	#[payload.BillingStreet],   
-	#[payload.Fax],   
-	CURRENT_TIMESTAMP,   
-	#[payload.Name], 
-	#[payload.Phone], 
-	#[payload.ShippingCity],  
-	#[payload.ShippingCountry],   
-	#[payload.ShippingPostalCode],   
-	#[payload.ShippingState],   
-	#[payload.ShippingStreet]
-);]]></db:parameterized-query>
+        <flow-ref name="insertTestingAccountIntoDB" doc:name="Call insertTestingAccountIntoDB"/>
 
-        </db:insert>
         <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="GET" doc:name="GET">
             <http:request-builder>
                 <http:uri-param paramName="id" value="12345"/>
@@ -193,64 +143,9 @@ payload map $.id]]></dw:set-payload>
         <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(200))]" doc:name="Assert that http.status eq 200"/>
 	</munit:test>
 	<munit:test	name="test-suite-put:/accounts/id:application/json:system-api-configTest"	description="Test" >
-        <dw:transform-message doc:name="Data to DB">
-            <dw:set-payload><![CDATA[%dw 1.0
-%output application/java
----
-{
-	  "Id" : "12345",
-	  "Name": "Eduard Walker",
-	  "Phone": "1-(318)596-8473",
-	  "Email": "ewalker0@liveinternet.ru",
-	  "BillingStreet": "Pleasure 4598",
-	  "BillingCity": "Shreveport",
-	  "BillingState": "Louisiana",
-	  "BillingPostalCode": "71105",
-	  "BillingCountry": "United States",
-	  "ShippingStreet": "Autumn Leaf 3",
-	  "ShippingCity": "Jackson",
-	  "ShippingState": "Mississippi",
-	  "ShippingPostalCode": "39204",
-	  "ShippingCountry": "United States"
-}]]></dw:set-payload>
-        </dw:transform-message>
-        <db:insert config-ref="Database" doc:name="INSERT">
-            <db:parameterized-query><![CDATA[INSERT INTO Account ( 
-	Id,   
-	BillingCity,   
-	BillingCountry, 
-	BillingPostalCode,  
-	BillingState,  
-	BillingStreet,  
-	Fax,  
-	LastModifiedDate,  
-	Name,  
-	Phone,  
-	ShippingCity,  
-	ShippingCountry,  
-	ShippingPostalCode, 
-	ShippingState,  
-	ShippingStreet
-) VALUES (  
-	#[payload.Id],   
-	#[payload.BillingCity],  
-	#[payload.BillingCountry],   
-	#[payload.BillingPostalCode],  
-	#[payload.BillingState],   
-	#[payload.BillingStreet],   
-	#[payload.Fax],   
-	CURRENT_TIMESTAMP,   
-	#[payload.Name], 
-	#[payload.Phone], 
-	#[payload.ShippingCity],  
-	#[payload.ShippingCountry],   
-	#[payload.ShippingPostalCode],   
-	#[payload.ShippingState],   
-	#[payload.ShippingStreet]
-);]]></db:parameterized-query>
+        <flow-ref name="insertTestingAccountIntoDB" doc:name="Call insertTestingAccountIntoDB"/>
 
-        </db:insert>
-        <dw:transform-message doc:name="JSON data to update">
+        <dw:transform-message doc:name="Prepare payload">
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/json
 ---
@@ -271,19 +166,49 @@ payload map $.id]]></dw:set-payload>
   "shippingCountry": "United States"
 }]]></dw:set-payload>
         </dw:transform-message>
-        <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="PUT" doc:name="HTTP">
+        <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="PUT" doc:name="PUT">
             <http:request-builder>
                 <http:uri-param paramName="id" value="12345"/>
             </http:request-builder>
         </http:request>
         <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(204))]" doc:name="Assert that http.status eq 204"/>
-        <db:select config-ref="Database" doc:name="SELECT">
+        <db:select config-ref="Database" doc:name="SELECT Accounts with specific name">
             <db:parameterized-query><![CDATA[SELECT * FROM Account WHERE Name = 'Jason Bourne';]]></db:parameterized-query>
+
         </db:select>
         <munit:assert-on-equals message="There should be one account selected" expectedValue="#[1]" actualValue="#[payload.size()]" doc:name="The updated account should be in the DB"/>
 	</munit:test>
 	<munit:test name="test-suite-delete:/accounts/id:system-api-configTest" description="Test" >
-        <dw:transform-message doc:name="Data to DB">
+        <flow-ref name="insertTestingAccountIntoDB" doc:name="Call insertTestingAccountIntoDB"/>
+
+        <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="DELETE" doc:name="DELETE">
+            <http:request-builder>
+                <http:uri-param paramName="id" value="12345"/>
+            </http:request-builder>
+        </http:request>
+        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(204))]" doc:name="Assert that http.status eq 204"/>
+        <db:select config-ref="Database" doc:name="SELECT Accounts">
+            <db:parameterized-query><![CDATA[SELECT * FROM Account;]]></db:parameterized-query>
+
+        </db:select>
+        <munit:assert-on-equals message="There should be no account in the DB." expectedValue="#[0]" actualValue="#[payload.size()]" doc:name="There should be no account in the DB"/>
+	</munit:test>
+    <munit:test name="test-suite-delete:/accounts/id:system-api-configTest-nonExisting" description="Test" >
+        <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="DELETE" doc:name="DELETE">
+            <http:request-builder>
+                <http:uri-param paramName="id" value="12345"/>
+            </http:request-builder>
+            <http:success-status-code-validator values="404"/>
+        </http:request>
+        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(404))]" doc:name="Assert that http.status eq 404"/>
+        <db:select config-ref="Database" doc:name="SELECT Accounts">
+            <db:parameterized-query><![CDATA[SELECT * FROM Account;]]></db:parameterized-query>
+
+        </db:select>
+        <munit:assert-on-equals message="There should be no account in the DB." expectedValue="#[0]" actualValue="#[payload.size()]" doc:name="There should be no account in the DB"/>
+    </munit:test>
+    <sub-flow name="insertTestingAccountIntoDB">
+        <dw:transform-message doc:name="Prepare data for DB">
             <dw:set-payload><![CDATA[%dw 1.0
 %output application/java
 ---
@@ -304,7 +229,7 @@ payload map $.id]]></dw:set-payload>
 	  "ShippingCountry": "United States"
 }]]></dw:set-payload>
         </dw:transform-message>
-        <db:insert config-ref="Database" doc:name="INSERT">
+        <db:insert config-ref="Database" doc:name="INSERT testing Account">
             <db:parameterized-query><![CDATA[INSERT INTO Account ( 
 	Id,   
 	BillingCity,   
@@ -339,28 +264,5 @@ payload map $.id]]></dw:set-payload>
 	#[payload.ShippingStreet]
 );]]></db:parameterized-query>
         </db:insert>
-        <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="DELETE" doc:name="DELETE">
-            <http:request-builder>
-                <http:uri-param paramName="id" value="12345"/>
-            </http:request-builder>
-        </http:request>
-        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(204))]" doc:name="Assert that http.status eq 204"/>
-        <db:select config-ref="Database" doc:name="SELECT">
-            <db:parameterized-query><![CDATA[SELECT * FROM Account;]]></db:parameterized-query>
-        </db:select>
-        <munit:assert-on-equals message="There should be one account in the DB." expectedValue="#[0]" actualValue="#[payload.size()]" doc:name="There should be no account in the DB"/>
-	</munit:test>
-    <munit:test name="test-suite-delete:/accounts/id:system-api-configTest-nonExisting" description="Test" >
-        <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="DELETE" doc:name="DELETE">
-            <http:request-builder>
-                <http:uri-param paramName="id" value="12345"/>
-            </http:request-builder>
-            <http:success-status-code-validator values="404"/>
-        </http:request>
-        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(404))]" doc:name="Assert that http.status eq 404"/>
-        <db:select config-ref="Database" doc:name="SELECT">
-            <db:parameterized-query><![CDATA[SELECT * FROM Account;]]></db:parameterized-query>
-        </db:select>
-        <munit:assert-on-equals message="There should be one account in the DB." expectedValue="#[0]" actualValue="#[payload.size()]" doc:name="There should be no account in the DB"/>
-    </munit:test>
+    </sub-flow>
 </mule>

@@ -52,7 +52,7 @@ To make this Anypoint Template run, there are certain preconditions that must be
 **Failling to do so could lead to unexpected behavior of the template.**
 
 This particular Anypoint Template requires a Database instance to work.
-The Anypoint Template comes packaged with a SQL script to create the Database table that it uses. It is the user responsability to use that script to create the table in an available schema and change the configuration accordingly. The SQL script file can be found in [src/main/resources/accounts.sql] (../master/src/main/resources/account.sql)
+The Anypoint Template comes packaged with a SQL script to create the Database table that it uses. It is the user responsability to use that script to create the table in an available schema and change the configuration accordingly. The SQL script file can be found in [src/main/resources/accounts.sql](../master/src/main/resources/account.sql)
 
 
 # Run it! <a name="runit"/>

@@ -39,7 +39,7 @@ http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/m
         <exception-strategy ref="system-api-apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
     </flow>
     <flow name="get:/accounts:system-api-config">
-        <dw:transform-message doc:name="whereClause as string in flowVar">
+        <dw:transform-message doc:name="Build whereClause as string in flowVar">
             <dw:set-variable variableName="whereClause"><![CDATA[%dw 1.0
 %output application/java
 %var fields = {     
@@ -67,7 +67,7 @@ joinBy ' '
 ]]></dw:set-variable>
         </dw:transform-message>
 
-        <db:select config-ref="Database" doc:name="SELECT">
+        <db:select config-ref="Database" doc:name="SELECT Accounts">
             <db:dynamic-query><![CDATA[SELECT Id, Name, BillingStreet, BillingCity, BillingPostalCode, BillingState, BillingCountry, ShippingStreet, ShippingCity, ShippingPostalCode, ShippingState, ShippingCountry, LastModifiedDate, LastModifiedById FROM Account WHERE Id LIKE '%' #[whereClause]]]></db:dynamic-query>
 
 
@@ -126,7 +126,7 @@ payload map {
 ---
 payload]]></dw:set-variable>
         </dw:transform-message>
-        <db:insert config-ref="Database" doc:name="INSERT">
+        <db:insert config-ref="Database" doc:name="INSERT Account">
             <db:parameterized-query><![CDATA[INSERT INTO Account (
 	Id,
 	BillingCity,
@@ -165,6 +165,7 @@ payload]]></dw:set-variable>
 
 
 
+
         </db:insert>
         <choice doc:name="Was Account inserted?">
             <when expression="#[payload == 1]">
@@ -193,7 +194,7 @@ payload]]></dw:set-variable>
 
 
         </db:select>
-        <logger message="SELECT: #[payload]" level="INFO" doc:name="Logger"/>
+
         <choice doc:name="Does the Account exist?">
             <when expression="#[payload != empty]">
                 <dw:transform-message doc:name="DB Account to sAPI Account">
@@ -287,7 +288,7 @@ WHERE Id = #[flowVars.id]]]></db:parameterized-query>
 
     </flow>
     <flow name="delete:/accounts/{id}:system-api-config">
-        <db:select config-ref="Database" doc:name="Database">
+        <db:select config-ref="Database" doc:name="SELECT Account with specific ID">
             <db:parameterized-query><![CDATA[SELECT Id FROM Account WHERE Id = #[message.inboundProperties.'http.uri.params'.id]]]></db:parameterized-query>
         </db:select>
         <choice doc:name="Does the Account exist?">
