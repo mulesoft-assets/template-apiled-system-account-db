@@ -3,6 +3,95 @@
   <connectorName>HTTP_Request_Configuration</connectorName>
   <metadataIo class="tree-map">
     <entry>
+      <string>DELETE:/accounts/{id}</string>
+      <map>
+        <entry>
+          <string>__default__</string>
+          <org.mule.tooling.metadata.cache.DefaultMetadataCacheEntry>
+            <input class="org.mule.common.metadata.DefaultMetaData">
+              <payload class="org.mule.common.metadata.DefaultUnknownMetaDataModel">
+                <dataType>UNKNOWN</dataType>
+                <metaDataModelPropertiesManager>
+                  <properties/>
+                </metaDataModelPropertiesManager>
+              </payload>
+              <properties>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>INBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>RECORD</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+              </properties>
+            </input>
+            <output class="org.mule.common.metadata.DefaultMetaData">
+              <payload class="org.mule.tooling.metadata.api.TypeRefMetaDataModel">
+                <connectorName>HTTP_Request_Configuration</connectorName>
+                <typeId>DELETE:/accounts/{id}_response</typeId>
+                <category>DEFAULT</category>
+              </payload>
+              <properties>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>INBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>RECORD</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+              </properties>
+            </output>
+          </org.mule.tooling.metadata.cache.DefaultMetadataCacheEntry>
+        </entry>
+      </map>
+    </entry>
+    <entry>
       <string>GET:/accounts</string>
       <map>
         <entry>
@@ -17,13 +106,7 @@
               </payload>
               <properties>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
-                  <org.mule.common.metadata.MetaDataProperties>
-                    <fields/>
-                  </org.mule.common.metadata.MetaDataProperties>
-                </entry>
-                <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
@@ -35,13 +118,19 @@
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
                   <org.mule.common.metadata.MetaDataPropertyScope>RECORD</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
@@ -514,13 +603,7 @@
               </payload>
               <properties>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
-                  <org.mule.common.metadata.MetaDataProperties>
-                    <fields/>
-                  </org.mule.common.metadata.MetaDataProperties>
-                </entry>
-                <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
@@ -532,13 +615,19 @@
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
                   <org.mule.common.metadata.MetaDataPropertyScope>RECORD</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
@@ -564,13 +653,7 @@
               </payload>
               <properties>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
-                  <org.mule.common.metadata.MetaDataProperties>
-                    <fields/>
-                  </org.mule.common.metadata.MetaDataProperties>
-                </entry>
-                <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
@@ -582,13 +665,19 @@
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
                   <org.mule.common.metadata.MetaDataPropertyScope>RECORD</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
@@ -603,13 +692,7 @@
               </payload>
               <properties>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
-                  <org.mule.common.metadata.MetaDataProperties>
-                    <fields/>
-                  </org.mule.common.metadata.MetaDataProperties>
-                </entry>
-                <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
@@ -621,13 +704,19 @@
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
                   <org.mule.common.metadata.MetaDataPropertyScope>RECORD</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
@@ -652,13 +741,7 @@
               </payload>
               <properties>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
-                  <org.mule.common.metadata.MetaDataProperties>
-                    <fields/>
-                  </org.mule.common.metadata.MetaDataProperties>
-                </entry>
-                <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
@@ -670,13 +753,19 @@
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
                   <org.mule.common.metadata.MetaDataPropertyScope>RECORD</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
@@ -691,13 +780,7 @@
               </payload>
               <properties>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
-                  <org.mule.common.metadata.MetaDataProperties>
-                    <fields/>
-                  </org.mule.common.metadata.MetaDataProperties>
-                </entry>
-                <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
@@ -709,13 +792,107 @@
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
-                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
                 </entry>
                 <entry>
                   <org.mule.common.metadata.MetaDataPropertyScope>RECORD</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+              </properties>
+            </output>
+          </org.mule.tooling.metadata.cache.DefaultMetadataCacheEntry>
+        </entry>
+      </map>
+    </entry>
+    <entry>
+      <string>PUT:/accounts/{id}</string>
+      <map>
+        <entry>
+          <string>__default__</string>
+          <org.mule.tooling.metadata.cache.DefaultMetadataCacheEntry>
+            <input class="org.mule.common.metadata.DefaultMetaData">
+              <payload class="org.mule.tooling.metadata.api.TypeRefMetaDataModel">
+                <connectorName>HTTP_Request_Configuration</connectorName>
+                <typeId>PUT:/accounts/{id}_request</typeId>
+                <category>DEFAULT</category>
+              </payload>
+              <properties>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>INBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>RECORD</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+              </properties>
+            </input>
+            <output class="org.mule.common.metadata.DefaultMetaData">
+              <payload class="org.mule.tooling.metadata.api.TypeRefMetaDataModel">
+                <connectorName>HTTP_Request_Configuration</connectorName>
+                <typeId>PUT:/accounts/{id}_response</typeId>
+                <category>DEFAULT</category>
+              </payload>
+              <properties>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>SESSION</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>INBOUND</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>FLOW</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>RECORD</org.mule.common.metadata.MetaDataPropertyScope>
+                  <org.mule.common.metadata.MetaDataProperties>
+                    <fields/>
+                  </org.mule.common.metadata.MetaDataProperties>
+                </entry>
+                <entry>
+                  <org.mule.common.metadata.MetaDataPropertyScope>OUTBOUND</org.mule.common.metadata.MetaDataPropertyScope>
                   <org.mule.common.metadata.MetaDataProperties>
                     <fields/>
                   </org.mule.common.metadata.MetaDataProperties>
