@@ -137,7 +137,7 @@ payload map $.id]]></dw:set-payload>
 
         <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="GET" doc:name="GET">
             <http:request-builder>
-                <http:uri-param paramName="id" value="12345"/>
+                <http:uri-param paramName="id" value="12345abc"/>
             </http:request-builder>
         </http:request>
         <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(200))]" doc:name="Assert that http.status eq 200"/>
@@ -168,7 +168,7 @@ payload map $.id]]></dw:set-payload>
         </dw:transform-message>
         <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="PUT" doc:name="PUT">
             <http:request-builder>
-                <http:uri-param paramName="id" value="12345"/>
+                <http:uri-param paramName="id" value="12345abc"/>
             </http:request-builder>
         </http:request>
         <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(204))]" doc:name="Assert that http.status eq 204"/>
@@ -183,7 +183,7 @@ payload map $.id]]></dw:set-payload>
 
         <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="DELETE" doc:name="DELETE">
             <http:request-builder>
-                <http:uri-param paramName="id" value="12345"/>
+                <http:uri-param paramName="id" value="12345abc"/>
             </http:request-builder>
         </http:request>
         <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(204))]" doc:name="Assert that http.status eq 204"/>
@@ -196,7 +196,7 @@ payload map $.id]]></dw:set-payload>
     <munit:test name="test-suite-delete:/accounts/id:system-api-configTest-nonExisting" description="Test" >
         <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="DELETE" doc:name="DELETE">
             <http:request-builder>
-                <http:uri-param paramName="id" value="12345"/>
+                <http:uri-param paramName="id" value="12345abc"/>
             </http:request-builder>
             <http:success-status-code-validator values="404"/>
         </http:request>
@@ -213,7 +213,7 @@ payload map $.id]]></dw:set-payload>
 %output application/java
 ---
 {
-	  "Id" : "12345",
+	  "Id" : "12345abc",
 	  "Name": "Eduard Walker",
 	  "Phone": "1-(318)596-8473",
 	  "Email": "ewalker0@liveinternet.ru",

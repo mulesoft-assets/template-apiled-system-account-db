@@ -1,11 +1,14 @@
-#%RAML 0.8
+#%RAML 1.0
 title: System API
-version: v1.0
+version: v2.0
+  
+types:
+  account: !include dataTypes/Account.raml
+  errorResponse: !include dataTypes/ErrorResponse.raml
+  successResponse: !include dataTypes/SuccessResponse.raml
 
-schemas:
-  - account: !include schemas/account_schema.json
-
-traits: !include ./traits/trait-collection.yaml
+traits:
+  accountSearch: !include traits/trait-collection.raml
 
 /accounts:
   displayName: Accounts
@@ -16,7 +19,7 @@ traits: !include ./traits/trait-collection.yaml
   get:
     description: |
       Retrieve all the Accounts.
-    is: [ collection ]
+    is: [ accountSearch ]
     queryParameters:
       name:
         displayName: The account name
@@ -36,22 +39,40 @@ traits: !include ./traits/trait-collection.yaml
       200:
         body:
           application/json:
-            example: !include ./examples/account_collection_example.json
+            type: account[]
+            example: !include examples/get_accounts_example.json
   post:
     description: |
       Create a new Account
     body:
       application/json:
-        schema: account
-        example: !include ./examples/account_post_request_example.json
+        type: account
+        example: !include examples/post_account_example.json
     responses:
       201:
         description: Created
         body:
           application/json:
-            example: !include ./examples/account_post_response_example.json
+            example: |
+              {
+                "id": "d7ac7f99-9d66-4f59-af39-d7519b7daad9"
+                "name": "Example Company"
+              }
+      400:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Failed to insert Account"
+                }
   /{id}:
     displayName: Account ID
+    description: |
+      Working with accounts:
+      * Retrieving specific account
+      * Updating specific account
+      * Deleting specific account
     uriParameters:
       id:
         type: string
@@ -62,29 +83,71 @@ traits: !include ./traits/trait-collection.yaml
         200:
           body:
             application/json:
-              schema: account
-              example: !include ./examples/account_example.json
-        400:
-          body:
-            application/json:
-              example: |
-                {
-                  "message": "Bad message"
-                }
+              type: account
+              example: !include examples/get_accountById_example.json
         404:
           body:
             application/json:
+              type: errorResponse
               example: |
                 {
                   "message": "Resource not found"
                 }
     put:
+      description: Update Account specified by ID
       body:
         application/json:
-          schema: account
-          example: !include ./examples/account_example.json
+          type: account
+          example: !include examples/put_account_example.json
       responses:
         204:
+          body:
+            application/json:
+              type: successResponse
+              example: |
+                {
+                  "status": "OK"
+                }
+        400:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Failed to update Account"
+                }
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
     delete:
+      description: Delete Account specified by ID
       responses:
         204:
+          body:
+            application/json:
+              type: successResponse
+              example: |
+                {
+                  "status": "OK"
+                }
+        400:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Failed to delete Account"
+                }
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
