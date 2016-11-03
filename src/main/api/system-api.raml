@@ -58,6 +58,14 @@ traits:
                 "id": "d7ac7f99-9d66-4f59-af39-d7519b7daad9"
                 "name": "Example Company"
               }
+      400:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Failed to create new Account"
+                }
   /{id}:
     displayName: Account ID
     description: |
@@ -77,13 +85,6 @@ traits:
             application/json:
               type: account
               example: !include examples/get_accountById_example.json
-        400:
-          body:
-            application/json:
-              example: |
-                {
-                  "message": "Bad message"
-                }
         404:
           body:
             application/json:
@@ -99,8 +100,38 @@ traits:
           type: account
           example: !include examples/put_account_example.json
       responses:
-        204:
+        200:
+          body:
+            application/json:
+              type: successResponse
+              example: |
+                {
+                  "status": "OK"
+                }
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
     delete:
       description: Delete Account specified by ID
       responses:
-        204:
+        200:
+          body:
+            application/json:
+              type: successResponse
+              example: |
+                {
+                  "status": "OK"
+                }
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }

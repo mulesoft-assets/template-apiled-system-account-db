@@ -182,7 +182,7 @@ payload]]></dw:set-variable>
             </when>
             <otherwise>
                 <set-property propertyName="http.status" value="#[400]" doc:name="Bad Request"/>
-                <set-payload doc:name="Set Payload" value="{ &quot;message&quot;: &quot;Failed to insert Account&quot; }"/>
+                <set-payload doc:name="Set Payload" value="{ &quot;message&quot;: &quot;Failed to create new Account&quot; }"/>
             </otherwise>
         </choice>
 
@@ -273,6 +273,14 @@ WHERE Id = #[flowVars.id]]]></db:parameterized-query>
                 <choice doc:name="Has the Account been updated?">
                     <when expression="#[payload == 1]">
                         <logger message="UPDATE: #[payload]" level="INFO" doc:name="Log UPDATE"/>
+                        <dw:transform-message doc:name="Prepare JSON output structure">
+                            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	status: "OK"
+}]]></dw:set-payload>
+                        </dw:transform-message>
                     </when>
                     <otherwise>
                         <set-property propertyName="http.status" value="#[400]" doc:name="Bad Request"/>
@@ -299,6 +307,14 @@ WHERE Id = #[flowVars.id]]]></db:parameterized-query>
                 <choice doc:name="Has the Account been deleted?">
                     <when expression="#[payload == 1]">
                         <logger message="UPDATE: #[payload]" level="INFO" doc:name="Log UPDATE"/>
+                        <dw:transform-message doc:name="Prepare JSON output structure">
+                            <dw:set-payload><![CDATA[%dw 1.0
+%output application/json
+---
+{
+	status: "OK"
+}]]></dw:set-payload>
+                        </dw:transform-message>
                     </when>
                     <otherwise>
                         <set-property propertyName="http.status" value="#[400]" doc:name="Bad Request"/>
