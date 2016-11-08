@@ -171,7 +171,7 @@ payload map $.id]]></dw:set-payload>
                 <http:uri-param paramName="id" value="12345abc"/>
             </http:request-builder>
         </http:request>
-        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(204))]" doc:name="Assert that http.status eq 204"/>
+        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(200))]" doc:name="Assert that http.status eq 200"/>
         <db:select config-ref="Database" doc:name="SELECT Accounts with specific name">
             <db:parameterized-query><![CDATA[SELECT * FROM Account WHERE Name = 'Jason Bourne';]]></db:parameterized-query>
 
@@ -186,7 +186,7 @@ payload map $.id]]></dw:set-payload>
                 <http:uri-param paramName="id" value="12345abc"/>
             </http:request-builder>
         </http:request>
-        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(204))]" doc:name="Assert that http.status eq 204"/>
+        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(200))]" doc:name="Assert that http.status eq 200"/>
         <db:select config-ref="Database" doc:name="SELECT Accounts">
             <db:parameterized-query><![CDATA[SELECT * FROM Account;]]></db:parameterized-query>
 
