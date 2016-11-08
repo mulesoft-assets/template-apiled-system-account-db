@@ -2,14 +2,18 @@
   "name": "Jason Bourne",
   "phone": "1-(318)596-8473",
   "email": "test@example.com",
-  "billingStreet": "Pleasure 4598",
-  "billingCity": "Shreveport",
-  "billingState": "Louisiana",
-  "billingPostalCode": "71105",
-  "billingCountry": "United States",
-  "shippingStreet": "Autumn Leaf 3",
-  "shippingCity": "Jackson",
-  "shippingState": "Mississippi",
-  "shippingPostalCode": "39204",
-  "shippingCountry": "United States"
+  "billingAddress": {
+  	"street": "Pleasure 4598",
+  	"city": "Shreveport",
+  	"state": "Louisiana",
+  	"postalCode": "71105",
+  	"country": "United States"
+  },
+  "shippingAddress": {
+  	"street": "Autumn Leaf 3",
+  	"city": "Jackson",
+  	"state": "Mississippi",
+  	"postalCode": "39204",
+  	"country": "United States"
+  }
 }

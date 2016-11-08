@@ -85,16 +85,20 @@ payload map {
 	id                  : $.Id,
 	nativeId            : $.Id,
 	name                : $.Name,
-	billingStreet       : $.BillingStreet,
-	billingCity         : $.BillingCity,
-	billingState        : $.BillingState,
-	billingPostalCode   : $.BillingPostalCode,
-	billingCountry      : $.BillingCountry,
-	shippingStreet      : $.ShippingStreet,
-	shippingCity        : $.ShippingCity,
-	shippingState       : $.ShippingState,
-	shippingPostalCode  : $.ShippingPostalCode,
-	shippingCountry     : $.ShippingCountry,
+	billingAddress: {
+		street       	: $.BillingStreet,
+		city         	: $.BillingCity,
+		state        	: $.BillingState,
+		postalCode   	: $.BillingPostalCode,
+		country      	: $.BillingCountry
+	},
+	shippingAddress: {
+		street      	: $.ShippingStreet,
+		city        	: $.ShippingCity,
+		state       	: $.ShippingState,
+		postalCode  	: $.ShippingPostalCode,
+		country     	: $.ShippingCountry
+	},	
 	lastModifiedDate    : $.LastModifiedDate
 }]]></dw:set-payload>
         </dw:transform-message>
@@ -109,16 +113,16 @@ payload map {
 {
 	Id                 : flowVars.id,
 	Name               : payload.name,
-	BillingStreet      : payload.billingStreet,
-	BillingCity        : payload.billingCity,
-	BillingState       : payload.billingState,
-	BillingPostalCode  : payload.billingPostalCode,
-	BillingCountry     : payload.billingCountry,
-	ShippingStreet     : payload.shippingStreet,
-	ShippingCity       : payload.shippingCity,
-	ShippingState      : payload.shippingState,
-	ShippingPostalCode : payload.shippingPostalCode,
-	ShippingCountry    : payload.shippingCountry,
+	BillingStreet      : payload.billingAddress.street,
+	BillingCity        : payload.billingAddress.city,
+	BillingState       : payload.billingAddress.state,
+	BillingPostalCode  : payload.billingAddress.postalCode,
+	BillingCountry     : payload.billingAddress.country,
+	ShippingStreet     : payload.shippingAddress.street,
+	ShippingCity       : payload.shippingAddress.city,
+	ShippingState      : payload.shippingAddress.state,
+	ShippingPostalCode : payload.shippingAddress.postalCode,
+	ShippingCountry    : payload.shippingAddress.country,
 	Phone              : payload.phone
 }]]></dw:set-payload>
             <dw:set-variable variableName="input"><![CDATA[%dw 1.0
@@ -205,16 +209,20 @@ payload]]></dw:set-variable>
 	id                  : payload[0].Id,
 	nativeId            : payload[0].Id,
 	name                : payload[0].Name,
-	billingStreet       : payload[0].BillingStreet,
-	billingCity         : payload[0].BillingCity,
-	billingState        : payload[0].BillingState,
-	billingPostalCode   : payload[0].BillingPostalCode,
-	billingCountry      : payload[0].BillingCountry,
-	shippingStreet      : payload[0].ShippingStreet,
-	shippingCity        : payload[0].ShippingCity,
-	shippingState       : payload[0].ShippingState,
-	shippingPostalCode  : payload[0].ShippingPostalCode,
-	shippingCountry     : payload[0].ShippingCountry,
+	billingAddress: {
+		street       	: payload[0].BillingStreet,
+		city         	: payload[0].BillingCity,
+		state        	: payload[0].BillingState,
+		postalCode   	: payload[0].BillingPostalCode,
+		country      	: payload[0].BillingCountry
+	},
+	shippingAddress: {
+		street      	: payload[0].ShippingStreet,
+		city        	: payload[0].ShippingCity,
+		state       	: payload[0].ShippingState,
+		postalCode  	: payload[0].ShippingPostalCode,
+		country     	: payload[0].ShippingCountry
+	},	
 	lastModifiedDate    : payload[0].LastModifiedDate
 }]]></dw:set-payload>
                 </dw:transform-message>
@@ -240,16 +248,16 @@ payload]]></dw:set-variable>
 ---
 {
 	Name              : flowVars.input.name,
-	BillingStreet     : flowVars.input.billingStreet,
-	BillingCity       : flowVars.input.billingCity,
-	BillingState      : flowVars.input.billingState,
-	BillingPostalCode : flowVars.input.billingPostalCode,
-	BillingCountry    : flowVars.input.billingCountry,
-	ShippingStreet    : flowVars.input.shippingStreet,
-	ShippingCity      : flowVars.input.shippingCity,
-	ShippingState     : flowVars.input.shippingState,
-	ShippingPostalCode: flowVars.input.shippingPostalCode,
-	ShippingCountry   : flowVars.input.shippingCountry,
+	BillingStreet     : flowVars.input.billingAddress.street,
+	BillingCity       : flowVars.input.billingAddress.city,
+	BillingState      : flowVars.input.billingAddress.state,
+	BillingPostalCode : flowVars.input.billingAddress.postalCode,
+	BillingCountry    : flowVars.input.billingAddress.country,
+	ShippingStreet    : flowVars.input.shippingAddress.street,
+	ShippingCity      : flowVars.input.shippingAddress.city,
+	ShippingState     : flowVars.input.shippingAddress.state,
+	ShippingPostalCode: flowVars.input.shippingAddress.postalCode,
+	ShippingCountry   : flowVars.input.shippingAddress.country,
 	Phone             : flowVars.input.phone
 }]]></dw:set-payload>
                 </dw:transform-message>
