@@ -4,21 +4,19 @@
 
 type: object
 properties: 
-  id?: string
+  id?: string | integer
   nativeId?: string
   name?: string
   phone?: string
   email?: string
-  createdDate?: string
-  billingStreet?: string
-  billingCity?: string
-  billingState?: string
-  billingPostalCode?: string
-  billingCountry?: string
-  shippingStreet?: string
-  shippingCity?: string
-  shippingState?: string
-  shippingPostalCode?: string
-  shippingCountry?: string
-  lastModifiedDate?: string
-  lastModifiedById?: string
+  createdDate:
+    type: datetime
+    example: 2016-03-24T14:00:00.000Z
+    required: false
+  billingAddress?: address
+  shippingAddress?: address
+  lastModifiedDate:
+    type: datetime
+    example: 2016-03-24T14:00:00.000Z
+    required: false
+  lastModifiedById?: string | integer

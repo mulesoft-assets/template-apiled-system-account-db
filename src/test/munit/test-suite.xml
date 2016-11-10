@@ -112,16 +112,20 @@ payload map $.id]]></dw:set-payload>
   "name": "Eduard Walker",
   "phone": "1-(318)596-8473",
   "email": "ewalker0@liveinternet.ru",
-  "billingStreet": "Pleasure 4598",
-  "billingCity": "Shreveport",
-  "billingState": "Louisiana",
-  "billingPostalCode": "71105",
-  "billingCountry": "United States",
-  "shippingStreet": "Autumn Leaf 3",
-  "shippingCity": "Jackson",
-  "shippingState": "Mississippi",
-  "shippingPostalCode": "39204",
-  "shippingCountry": "United States"
+  "billingAddress": {
+  	"street": "Pleasure 4598",
+	"city": "Shreveport",
+	"state": "Louisiana",
+	"postalCode": "71105",
+	"country": "United States"
+  },
+  "shippingAddress": {
+  	"street": "Autumn Leaf 3",
+	"city": "Jackson",
+	"state": "Mississippi",
+	"postalCode": "39204",
+	"country": "United States"
+  }
 }]]></dw:set-payload>
         </dw:transform-message>
         <http:request config-ref="HTTP_Request_Configuration" path="/accounts" method="POST" doc:name="POST"/>
@@ -154,16 +158,20 @@ payload map $.id]]></dw:set-payload>
   "phone": "1-(318)596-8473",
   "fax": "1-(318)596-8474",
   "email": "test@example.com",
-  "billingStreet": "Pleasure 4598",
-  "billingCity": "Shreveport",
-  "billingState": "Louisiana",
-  "billingPostalCode": "71105",
-  "billingCountry": "United States",
-  "shippingStreet": "Autumn Leaf 3",
-  "shippingCity": "Jackson",
-  "shippingState": "Mississippi",
-  "shippingPostalCode": "39204",
-  "shippingCountry": "United States"
+  "billingAddress": {
+  	"street": "Pleasure 4598",
+	"city": "Shreveport",
+	"state": "Louisiana",
+	"postalCode": "71105",
+	"country": "United States"
+  },
+  "shippingAddress": {
+  	"street": "Autumn Leaf 3",
+	"city": "Jackson",
+	"state": "Mississippi",
+	"postalCode": "39204",
+	"country": "United States"
+  }
 }]]></dw:set-payload>
         </dw:transform-message>
         <http:request config-ref="HTTP_Request_Configuration" path="/accounts/{id}" method="PUT" doc:name="PUT">
@@ -171,7 +179,7 @@ payload map $.id]]></dw:set-payload>
                 <http:uri-param paramName="id" value="12345abc"/>
             </http:request-builder>
         </http:request>
-        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(204))]" doc:name="Assert that http.status eq 204"/>
+        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(200))]" doc:name="Assert that http.status eq 200"/>
         <db:select config-ref="Database" doc:name="SELECT Accounts with specific name">
             <db:parameterized-query><![CDATA[SELECT * FROM Account WHERE Name = 'Jason Bourne';]]></db:parameterized-query>
 
@@ -186,7 +194,7 @@ payload map $.id]]></dw:set-payload>
                 <http:uri-param paramName="id" value="12345abc"/>
             </http:request-builder>
         </http:request>
-        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(204))]" doc:name="Assert that http.status eq 204"/>
+        <munit:assert-true message="The HTTP Status code is not correct!" condition="#[messageInboundProperty('http.status').is(eq(200))]" doc:name="Assert that http.status eq 200"/>
         <db:select config-ref="Database" doc:name="SELECT Accounts">
             <db:parameterized-query><![CDATA[SELECT * FROM Account;]]></db:parameterized-query>
 
@@ -217,16 +225,20 @@ payload map $.id]]></dw:set-payload>
 	  "Name": "Eduard Walker",
 	  "Phone": "1-(318)596-8473",
 	  "Email": "ewalker0@liveinternet.ru",
-	  "BillingStreet": "Pleasure 4598",
-	  "BillingCity": "Shreveport",
-	  "BillingState": "Louisiana",
-	  "BillingPostalCode": "71105",
-	  "BillingCountry": "United States",
-	  "ShippingStreet": "Autumn Leaf 3",
-	  "ShippingCity": "Jackson",
-	  "ShippingState": "Mississippi",
-	  "ShippingPostalCode": "39204",
-	  "ShippingCountry": "United States"
+	  "billingAddress": {
+		"street": "Pleasure 4598",
+		"city": "Shreveport",
+		"state": "Louisiana",
+		"postalCode": "71105",
+		"country": "United States"
+	  },
+	  "shippingAddress": {
+		"street": "Autumn Leaf 3",
+		"city": "Jackson",
+		"state": "Mississippi",
+		"postalCode": "39204",
+		"country": "United States"
+	  }
 }]]></dw:set-payload>
         </dw:transform-message>
         <db:insert config-ref="Database" doc:name="INSERT testing Account">
