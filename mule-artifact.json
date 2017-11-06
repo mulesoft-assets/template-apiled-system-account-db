@@ -1,0 +1,20 @@
+{
+  "domain": "default",
+  "configs": [
+    "system-api.xml"
+  ],
+  "redeploymentEnabled": true,
+  "name": "template-apiled-system-account-db",
+  "minMuleVersion": "4.0.0-SNAPSHOT",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedResources": []
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}
