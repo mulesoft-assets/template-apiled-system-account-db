@@ -3,7 +3,7 @@
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">  
     <http:listener-config name="system-api-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="8081" />
+        <http:listener-connection host="0.0.0.0" port="${http.port}" />
     </http:listener-config>
     <apikit:config name="system-api-config" raml="system-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router">
 		<apikit:flow-mappings >
@@ -263,7 +263,7 @@ output application/java
 		</db:insert>
 		<choice doc:name="Was Account inserted?" doc:id="3687dda5-5df4-4f73-adba-a08d728955d3" >
 			<when expression="#[vars.insertResult.affectedRows == 1]" >
-				<set-variable variableName="outboundHeaders" value="#[{ 'Location':'http://${api.domain}:${http.port}/${api.basePath}/accounts/' ++ vars.id }]" doc:name="Set Location header" doc:id="c9ba022c-5e45-4dca-a353-e5df91ce3625" />
+				<set-variable variableName="outboundHeaders" value="#[{ 'Location':'http://${api.domain}:${http.port}/api/accounts/' ++ vars.id }]" doc:name="Set Location header" doc:id="c9ba022c-5e45-4dca-a353-e5df91ce3625" />
 				<ee:transform doc:name="Build Response" doc:id="324c2f22-500d-4f7d-9f64-cacc23e39ca8" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0

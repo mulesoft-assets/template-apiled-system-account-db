@@ -28,18 +28,10 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-				<sharedLibraries>
+					<sharedLibraries>
                         <sharedLibrary>
                             <groupId>mysql</groupId>
                             <artifactId>mysql-connector-java</artifactId>
-                        </sharedLibrary>
-                    <sharedLibrary>
-                            <groupId>org.springframework.security</groupId>
-                            <artifactId>spring-security-core</artifactId>
-                        </sharedLibrary>
-                    <sharedLibrary>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-context</artifactId>
                         </sharedLibrary>
                     </sharedLibraries>
                 </configuration>
@@ -91,16 +83,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>${mysql.version}</version>
         </dependency>	
-    	<dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>4.0.4.RELEASE</version>
-        </dependency>
-    	<dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>4.1.9.RELEASE</version>
-        </dependency>
     </dependencies>
 
 	<repositories>
