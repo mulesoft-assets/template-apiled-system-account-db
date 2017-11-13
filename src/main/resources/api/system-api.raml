@@ -1,0 +1,141 @@
+#%RAML 1.0
+title: System API
+version: v2.0
+  
+types:
+  address: !include dataTypes/Address.raml
+  account: !include dataTypes/Account.raml
+  errorResponse: !include dataTypes/ErrorResponse.raml
+  successResponse: !include dataTypes/SuccessResponse.raml
+
+traits:
+  accountSearch: !include traits/trait-collection.raml
+
+/accounts:
+  displayName: Accounts
+  description: |
+    Working with accounts:
+    * Retrieving all accounts
+    * Creating accounts
+  get:
+    description: |
+      Retrieve all the Accounts.
+    is: [ accountSearch ]
+    queryParameters:
+      name:
+        displayName: The account name
+        minLength: 0
+        maxLength: 255
+        required: false
+      modifiedAfter:
+        displayName: Only those modified after this date
+        minLength: 23
+        maxLength: 29
+        required: false
+        example: 2016-04-28T14:00:00.000Z
+      modifiedBefore:
+        displayName: Only those modified before this date
+        minLength: 23
+        maxLength: 29
+        required: false
+        example: 2016-05-28T14:00:00.000Z
+    responses:
+      200:
+        body:
+          application/json:
+            type: account[]
+            example: !include examples/get_accounts_example.json
+  post:
+    description: |
+      Create a new Account
+    body:
+      application/json:
+        type: account
+        example: !include examples/post_account_example.json
+    responses:
+      201:
+        description: Created
+        body:
+          application/json:
+            example: |
+              {
+                "id": "d7ac7f99-9d66-4f59-af39-d7519b7daad9",
+                "name": "Example Company"
+              }
+      400:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Failed to create new Account"
+                }
+  /{id}:
+    displayName: Account ID
+    description: |
+      Working with accounts:
+      * Retrieving specific account
+      * Updating specific account
+      * Deleting specific account
+    uriParameters:
+      id:
+        type: string
+        description: Represents the account ID of native system
+    get:
+      description: Get Account by ID
+      responses:
+        200:
+          body:
+            application/json:
+              type: account
+              example: !include examples/get_accountById_example.json
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
+    put:
+      description: Update Account specified by ID
+      body:
+        application/json:
+          type: account
+          example: !include examples/put_account_example.json
+      responses:
+        200:
+          body:
+            application/json:
+              type: successResponse
+              example: |
+                {
+                  "status": "OK"
+                }
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
+    delete:
+      description: Delete Account specified by ID
+      responses:
+        200:
+          body:
+            application/json:
+              type: successResponse
+              example: |
+                {
+                  "status": "OK"
+                }
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
