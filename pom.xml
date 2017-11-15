@@ -36,20 +36,6 @@
                     </sharedLibraries>
                 </configuration>
 			</plugin>
-			<plugin>
-                <groupId>org.mule.tools.maven</groupId>
-                <artifactId>mule-maven-plugin</artifactId>
-                <version>${mule.maven.plugin.version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <sharedLibraries>
-                        <sharedLibrary>
-                            <groupId>mysql</groupId>
-                            <artifactId>mysql-connector-java</artifactId>
-                        </sharedLibrary>
-                    </sharedLibraries>
-                </configuration>
-            </plugin>
 		</plugins>
 	</build>
 
