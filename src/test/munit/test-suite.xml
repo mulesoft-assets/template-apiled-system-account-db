@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
-    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+    xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
     xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
 		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
     <munit:config name="test-suite.xml" />
 
     <configuration-properties doc:name="Configuration properties" doc:id="3ada2881-d4b2-4e61-af85-f0d435105cb1"
@@ -19,62 +20,17 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         basePath="${api.basePath}">
         <http:request-connection host="${api.domain}" port="${http.port}" />
     </http:request-config>
+    <munit:after-test name="test-suiteAfter_Test" description="After tests actions" doc:id="e2229d26-859e-475f-b8e9-4245af8aea0c">
+        <db:delete doc:name="DELETE all Accounts" doc:id="26de49f9-dfbc-4748-abd8-564cfbb08dbd" config-ref="Database_Config">
+            <db:sql>DELETE FROM Account;</db:sql>
+        </db:delete>
+    </munit:after-test>
     <munit:test name="test-suite-get:accounts:system-api-configTest" description="MUnit Test" doc:id="79ee752f-af91-4ef1-bb22-c80194cc115f">
         <munit:enable-flow-sources>
             <munit:enable-flow-source value="system-api-main" />
             <munit:enable-flow-source value="get:\accounts:system-api-config" />
         </munit:enable-flow-sources>
         <munit:behavior>
-            <ee:transform doc:name="Set dbAccounts" doc:id="e045f1ac-ae61-4442-adf0-c8658d52fc50">
-                <ee:message>
-                </ee:message>
-                <ee:variables>
-                    <ee:set-variable variableName="dbAccounts"><![CDATA[%dw 2.0
-output application/java
----
-[
-   {
-	"Id": "2e1c66e5-1db8-11e6-8d57-54ee7534a10b",
-	"Name": "Eduard Walker",
-	"BillingStreet": "Pleasure 4598",
-	"BillingCity": "Shreveport",
-	"BillingState": "Louisiana",
-	"BillingPostalCode": "71105",
-	"BillingCountry": "United States",
-	"ShippingStreet": "Autumn Leaf 3",
-	"ShippingCity": "Jackson",
-	"ShippingState": "Mississippi",
-	"ShippingPostalCode": "39204",
-	"ShippingCountry": "United States",
-	"LastModifiedDate": "2016-05-19T13:52:36"
-},
-   {
-	"Id": "7d940c44-1db7-11e6-8d57-54ee7534a10b",
-	"Name": "Tom Walkers",
-	"BillingStreet": "Pleasure 4598",
-	"BillingCity": "Shreveport",
-	"BillingState": "Louisiana",
-	"BillingPostalCode": "71105",
-	"BillingCountry": "United States",
-	"ShippingStreet": "Autumn Leaf 3",
-	"ShippingCity": "Jackson",
-	"ShippingState": "Mississippi",
-	"ShippingPostalCode": "39204",
-	"ShippingCountry": "United States",
-	"LastModifiedDate": "2016-05-19T13:47:40"
-}
-]]]></ee:set-variable>
-                </ee:variables>
-            </ee:transform>
-            <munit-tools:mock-when doc:name="Mock 'SELECT Accounts'" doc:id="8b7b62ac-d772-4cbd-9671-ae7f41707f0b"
-                processor=".*:.*">
-                <munit-tools:with-attributes>
-                    <munit-tools:with-attribute attributeName="doc:name" whereValue="SELECT Accounts" />
-                </munit-tools:with-attributes>
-                <munit-tools:then-return>
-                    <munit-tools:payload value="#[vars.dbAccounts]" />
-                </munit-tools:then-return>
-            </munit-tools:mock-when>
             <munit-tools:spy doc:name="Spy" doc:id="bc218e98-ec6b-49a7-abbe-e2ce5534991d" processor=".*:.*">
                 <munit-tools:with-attributes>
                     <munit-tools:with-attribute attributeName="doc:name" whereValue="Build whereClause as string" />
@@ -87,6 +43,41 @@ output application/java
             </munit-tools:spy>
         </munit:behavior>
         <munit:execution>
+            <db:insert doc:name="Insert" doc:id="c8e21ec9-78d0-4a1b-9edf-b225767170bb" config-ref="Database_Config">
+                <db:sql>INSERT INTO Account
+                    (Id,NativeId,BillingCity,BillingCountry,BillingPostalCode,BillingState,BillingStreet,LastModifiedDate,LastModifiedById,Name,Phone,ShippingCity,ShippingCountry,ShippingPostalCode,ShippingState,ShippingStreet)
+                    VALUES
+                    ('074a8d46-1db3-11e6-8d57-54ee7534a10b','1234567890','Shreveport','United States','71105','Louisiana','Pleasure 4598','2016-05-20 13:54:28','root@localhost','Jason Bourne','1-(318)596-8473','Jackson','United
+                    States','39204','Mississippi','Autumn Leaf 3'),
+                    ('2e1c66e5-1db8-11e6-8d57-54ee7534a10b','1234567891','Shreveport','United States','71105','Louisiana','Pleasure
+                    4598','2016-05-19 13:52:36','root@localhost','Eduard Walker','1-(318)596-8473','Jackson','United
+                    States','39204','Mississippi','Autumn Leaf 3'),
+                    ('42fed860-1db2-11e6-8d57-54ee7534a10b','1234567892','Shreveport','United States','71105','Louisiana','Pleasure
+                    4598','2016-05-19 13:10:14','root@localhost','Jimmy Jones','1-(318)596-8473','Jackson','United
+                    States','39204','Mississippi','Autumn Leaf 3'),
+                    ('494ffe08-1c37-11e6-b43d-54ee7534a10b','1234567893','Shreveport','United States','71105','Louisiana','Pleasure
+                    4598','2016-05-17 15:57:26','root@localhost','Louie McNamara','1-(318)596-8473','Jackson','United
+                    States','39204','Mississippi','Autumn Leaf 3'),
+                    ('4a2d4ea0-1cf4-11e6-b43d-54ee7534a10b','1234567894','Shreveport','United States','71105','Louisiana','Pleasure
+                    4598','2016-05-18 14:30:02','root@localhost','GI Joe','1-(318)596-8473','Jackson','United
+                    States','39204','Mississippi','Autumn Leaf 3'),
+                    ('4bc5345c-1db7-11e6-8d57-54ee7534a10b','1234567895','Shreveport','United States','71105','Louisiana','Pleasure
+                    4598','2016-05-15 13:46:16','root@localhost','Franke Star','1-(318)596-8473','Jackson','United
+                    States','39204','Mississippi','Autumn Leaf 3'),
+                    ('5978c321-1db2-11e6-8d57-54ee7534a10b','1234567896','Shreveport','United States','71105','Louisiana','Pleasure
+                    4598','2016-05-19 13:10:52','root@localhost','Jack Guererra','1-(318)596-8473','Jackson','United
+                    States','39204','Mississippi','Autumn Leaf 3'),
+                    ('6f6e73d9-1db5-11e6-8d57-54ee7534a10b','1234567897','Shreveport','United States','71105','Louisiana','Pleasure
+                    4598','2016-05-19 13:32:57','root@localhost','Antonio Silva','1-(318)596-8473','Jackson','United
+                    States','39204','Mississippi','Autumn Leaf 3'),
+                    ('7d940c44-1db7-11e6-8d57-54ee7534a10b','1234567898','Shreveport','United States','71105','Louisiana','Pleasure
+                    4598','2016-05-19 13:47:40','root@localhost','Tom Walkers','1-(318)596-8473','Jackson','United
+                    States','39204','Mississippi','Autumn Leaf 3'),
+                    ('9849e1a2-1db7-11e6-8d57-54ee7534a10b','1234567899','Shreveport','United States','71105','Louisiana','Pleasure
+                    4598','2016-05-19 13:48:25','root@localhost','Andreas Fung','1-(318)596-8473','Jackson','United
+                    States','39204','Mississippi','Autumn Leaf 3');
+                </db:sql>
+            </db:insert>
             <http:request method="GET" doc:name="HTTP GET Request" doc:id="fae74a63-9fff-48cf-9b57-952af5e1d739" config-ref="HTTP_Request_Configuration"
                 path="/accounts">
                 <http:query-params><![CDATA[#[output applicaton/java
@@ -125,53 +116,14 @@ payload map $.id]]></ee:set-payload>
             <munit:enable-flow-source value="system-api-main" />
             <munit:enable-flow-source value="get:\accounts\(id):system-api-config" />
         </munit:enable-flow-sources>
-        <munit:behavior>
-            <ee:transform doc:name="Set dbAccount" doc:id="9fc8a6e1-b24f-441d-9bcc-01e2056d286a">
-                <ee:message>
-                </ee:message>
-                <ee:variables>
-                    <ee:set-variable variableName="dbAccount"><![CDATA[%dw 2.0
-output application/java
----
-[{
-	"Id" : "12345abc",
-	"Name": "Eduard Walker",
-	"Phone": "1-(318)596-8473",
-	"Email": "ewalker0@liveinternet.ru",
-	"billingAddress": {
-		"street": "Pleasure 4598",
-		"city": "Shreveport",
-		"state": "Louisiana",
-		"postalCode": "71105",
-		"country": "United States"
-	},
-	"shippingAddress": {
-		"street": "Autumn Leaf 3",
-		"city": "Jackson",
-		"state": "Mississippi",
-		"postalCode": "39204",
-		"country": "United States"
-	}
-}]]]></ee:set-variable>
-                </ee:variables>
-            </ee:transform>
-            <munit-tools:mock-when doc:name="Mock 'Select Account'" doc:id="8b7b62ac-d772-4cbd-9671-ae7f41707f0b"
-                processor=".*:.*">
-                <munit-tools:with-attributes>
-                    <munit-tools:with-attribute attributeName="doc:name" whereValue="Select Account" />
-                </munit-tools:with-attributes>
-                <munit-tools:then-return>
-                    <munit-tools:payload value="#[vars.dbAccount]" />
-                </munit-tools:then-return>
-            </munit-tools:mock-when>
-        </munit:behavior>
         <munit:execution>
+            <flow-ref doc:name="insertTestingAccountIntoDB" doc:id="dc065a2c-69fa-46ff-b897-9e7fa7585a3b" name="insertTestingAccountIntoDB" />
             <http:request method="GET" doc:name="HTTP GET Request" doc:id="b694dd1f-097c-4c64-b582-5910a2dcc675" config-ref="HTTP_Request_Configuration"
                 path="/accounts/{id}">
                 <http:uri-params><![CDATA[#[output applicaton/java
 ---
 {
-	"id" : "12345abc"
+	"id" : "5261bb4e-f9e3-4f48-93ae-bd68e424daf3"
 }]]]></http:uri-params>
             </http:request>
         </munit:execution>
@@ -186,17 +138,6 @@ output application/java
             <munit:enable-flow-source value="system-api-main" />
             <munit:enable-flow-source value="get:\accounts\(id):system-api-config" />
         </munit:enable-flow-sources>
-        <munit:behavior>
-            <munit-tools:mock-when doc:name="Mock 'Select Account'" doc:id="8b7b62ac-d772-4cbd-9671-ae7f41707f0b"
-                processor=".*:.*">
-                <munit-tools:with-attributes>
-                    <munit-tools:with-attribute attributeName="doc:name" whereValue="Select Account" />
-                </munit-tools:with-attributes>
-                <munit-tools:then-return>
-                    <munit-tools:payload value='#[[]]' mediaType="application/java" />
-                </munit-tools:then-return>
-            </munit-tools:mock-when>
-        </munit:behavior>
         <munit:execution>
             <http:request method="GET" doc:name="HTTP GET Request" doc:id="b694dd1f-097c-4c64-b582-5910a2dcc675" config-ref="HTTP_Request_Configuration"
                 path="/accounts/{id}">
@@ -217,17 +158,6 @@ output application/java
             <munit:enable-flow-source value="system-api-main" />
             <munit:enable-flow-source value="post:\accounts:application\json:system-api-config" />
         </munit:enable-flow-sources>
-        <munit:behavior>
-            <munit-tools:mock-when doc:name="Mock 'INSERT Account'" doc:id="7a11ebe2-e140-4791-9be4-406b95fb6ed0"
-                processor=".*:.*">
-                <munit-tools:with-attributes>
-                    <munit-tools:with-attribute attributeName="doc:name" whereValue="INSERT Account" />
-                </munit-tools:with-attributes>
-                <munit-tools:then-return>
-                    <munit-tools:payload value='#[{"affectedRows" : 1}]' mediaType="application/java" />
-                </munit-tools:then-return>
-            </munit-tools:mock-when>
-        </munit:behavior>
         <munit:execution>
             <set-payload
                 value='{
@@ -257,6 +187,11 @@ output application/java
         <munit:validation>
             <munit-tools:assert-that doc:name="Assert that http.status eq 201" doc:id="1449487c-a810-4919-a567-a09780f6414c"
                 expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(201)]" message="The HTTP Status code is not correct!" />
+            <db:select doc:name="SELECT Accounts" doc:id="46969fb5-9c2e-40a0-8d0f-0196ebbab291" config-ref="Database_Config">
+                <db:sql>SELECT * FROM Account</db:sql>
+            </db:select>
+            <munit-tools:assert-that doc:name="There should be one account in the DB" doc:id="a4389599-b8ed-42e6-a439-83d7c0e33625"
+                expression="#[sizeOf(payload)]" message="There should be one account in the DB." is="#[MunitTools::equalTo(1)]" />
         </munit:validation>
     </munit:test>
     <munit:test name="test-suite-post:accounts:system-api-configTest-bad-request" description="MUnit Test"
@@ -308,33 +243,14 @@ output application/java
         </munit:validation>
     </munit:test>
     <munit:test name="test-suite-put:accounts_id:system-api-configTest" description="MUnit Test" doc:id="c7779532-a921-4084-8a8f-cfe0583addc5">
-		<munit:enable-flow-sources >
-			<munit:enable-flow-source value="system-api-main" />
-			<munit:enable-flow-source value="put:\accounts\(id):application\json:system-api-config" />
-		</munit:enable-flow-sources>
-		<munit:behavior >
-			<munit-tools:mock-when doc:name="Mock 'Select Account'" doc:id="8b7b62ac-d772-4cbd-9671-ae7f41707f0b" processor=".*:.*" >
-				<munit-tools:with-attributes >
-					<munit-tools:with-attribute attributeName="doc:name" whereValue="Select Account" />
-				</munit-tools:with-attributes>
-				<munit-tools:then-return >
-					<munit-tools:payload value="#[payload]" />
-					<munit-tools:variables >
-						<munit-tools:variable key="recordFromDb" value='#[["5261bb4e-f9e3-4f48-93ae-bd68e424daf3"]]' />
-					</munit-tools:variables>
-				</munit-tools:then-return>
-			</munit-tools:mock-when>
-			<munit-tools:mock-when doc:name="Mock 'UPDATE Account'" doc:id="8b7b62ac-d772-4cbd-9671-ae7f41707f0b" processor=".*:.*" >
-				<munit-tools:with-attributes >
-					<munit-tools:with-attribute attributeName="doc:name" whereValue="UPDATE Account" />
-				</munit-tools:with-attributes>
-				<munit-tools:then-return >
-					<munit-tools:payload value='#[{"affectedRows" : 1}]' mediaType="application/java"/>
-				</munit-tools:then-return>
-			</munit-tools:mock-when>
-		</munit:behavior>
-		<munit:execution >
-			<set-payload value='{
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="system-api-main" />
+            <munit:enable-flow-source value="put:\accounts\(id):application\json:system-api-config" />
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <flow-ref doc:name="insertTestingAccountIntoDB" doc:id="1e134520-06fc-4407-81c1-b03d8ba79962" name="insertTestingAccountIntoDB" />
+            <set-payload
+                value='{
   "name": "Jason Bourne",
   "phone": "1-(318)596-8473",
   "email": "test@example.com",
@@ -352,36 +268,36 @@ output application/java
   	"postalCode": "39204",
   	"country": "United States"
   }
-}' doc:name="Set Payload" doc:id="16ca4647-174f-409b-9c5f-8a93b30a362b" mimeType="application/json" />
-			<http:request method="PUT" doc:name="HTTP PUT Request" doc:id="b694dd1f-097c-4c64-b582-5910a2dcc676" config-ref="HTTP_Request_Configuration" path="/accounts/{id}" >
-				<http:uri-params ><![CDATA[#[output applicaton/java
+}'
+                doc:name="Set Payload" doc:id="16ca4647-174f-409b-9c5f-8a93b30a362b" mimeType="application/json" />
+            <http:request method="PUT" doc:name="HTTP PUT Request" doc:id="b694dd1f-097c-4c64-b582-5910a2dcc676" config-ref="HTTP_Request_Configuration"
+                path="/accounts/{id}">
+                <http:uri-params><![CDATA[#[output applicaton/java
 ---
 {
 	"id" : "5261bb4e-f9e3-4f48-93ae-bd68e424daf3"
 }]]]></http:uri-params>
-			</http:request>
-		</munit:execution>
-		<munit:validation >
-			<munit-tools:assert-that doc:name="Assert that http.status eq 200" doc:id="1449487c-a810-4919-a567-a09780f6414c" expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(200)]" message="The HTTP Status code is not correct!" />
-		</munit:validation>
-	</munit:test>
-	<munit:test name="test-suite-put:accounts_id:system-api-configTest-not-found" description="MUnit Test" doc:id="2fdb2892-d840-4b70-bcd1-eaa48d60be13" expectedErrorType="HTTP:NOT_FOUND">
-        <munit:enable-flow-sources >
-			<munit:enable-flow-source value="system-api-main" />
-			<munit:enable-flow-source value="put:\accounts\(id):application\json:system-api-config" />
-		</munit:enable-flow-sources>
-		<munit:behavior>
-                <munit-tools:mock-when doc:name="Mock 'Select Account'" doc:id="8b7b62ac-d772-4cbd-9671-ae7f41707f0b" processor=".*:.*">
-                    <munit-tools:with-attributes>
-                        <munit-tools:with-attribute attributeName="doc:name" whereValue="Select Account" />
-                    </munit-tools:with-attributes>
-                    <munit-tools:then-return>
-                        <munit-tools:payload value="#[[]]" />
-                    </munit-tools:then-return>
-                </munit-tools:mock-when>
-            </munit:behavior>
-            <munit:execution>
-                <set-payload value='{
+            </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that doc:name="Assert that http.status eq 200" doc:id="1449487c-a810-4919-a567-a09780f6414c"
+                expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(200)]" message="The HTTP Status code is not correct!" />
+            <db:select doc:name="SELECT Accounts with specific name" doc:id="22272958-b6b5-460d-9a25-afe6b23330a9" config-ref="Database_Config">
+                <db:sql>SELECT * FROM Account WHERE Name = 'Jason Bourne';</db:sql>
+            </db:select>
+            <munit-tools:assert-that doc:name="The updated account should be in the DB" doc:id="31629a80-e718-44ad-ad25-be2dcd4fa769"
+                expression="#[sizeOf(payload)]" is="#[MunitTools::equalTo(1)]" message="There should be one account selected" />
+        </munit:validation>
+    </munit:test>
+    <munit:test name="test-suite-put:accounts_id:system-api-configTest-not-found" description="MUnit Test"
+        doc:id="2fdb2892-d840-4b70-bcd1-eaa48d60be13" expectedErrorType="HTTP:NOT_FOUND">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="system-api-main" />
+            <munit:enable-flow-source value="put:\accounts\(id):application\json:system-api-config" />
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <set-payload
+                value='{
   "name": "Jason Bourne",
   "phone": "1-(318)596-8473",
   "email": "test@example.com",
@@ -399,84 +315,154 @@ output application/java
   	"postalCode": "39204",
   	"country": "United States"
   }
-}' doc:name="Set Payload" doc:id="16ca4647-174f-409b-9c5f-8a93b30a362b" mimeType="application/json" />
-			<http:request method="PUT" doc:name="HTTP PUT Request" doc:id="b694dd1f-097c-4c64-b582-5910a2dcc675" config-ref="HTTP_Request_Configuration" path="/accounts/{id}">
-                    <http:uri-params><![CDATA[#[output applicaton/java
+}'
+                doc:name="Set Payload" doc:id="16ca4647-174f-409b-9c5f-8a93b30a362b" mimeType="application/json" />
+            <http:request method="PUT" doc:name="HTTP PUT Request" doc:id="b694dd1f-097c-4c64-b582-5910a2dcc675" config-ref="HTTP_Request_Configuration"
+                path="/accounts/{id}">
+                <http:uri-params><![CDATA[#[output applicaton/java
 ---
 {
 	"id" : "12345abc"
 }]]]></http:uri-params>
-                </http:request>
-            </munit:execution>
-            <munit:validation>
-                <munit-tools:assert-that doc:name="Assert that http.status eq 404" doc:id="1449487c-a810-4919-a567-a09780f6414c" expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(404)]" message="The HTTP Status code is not correct!" />
-            </munit:validation>
-        </munit:test>
-                        <munit:test name="test-suite-delete:accounts_id:system-api-configTest" description="MUnit Test" doc:id="2fdb2892-d840-4b70-bcd1-eaa48d60be15">
-        <munit:enable-flow-sources >
+            </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that doc:name="Assert that http.status eq 404" doc:id="1449487c-a810-4919-a567-a09780f6414c"
+                expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(404)]" message="The HTTP Status code is not correct!" />
+        </munit:validation>
+    </munit:test>
+    <munit:test name="test-suite-delete:accounts_id:system-api-configTest" description="MUnit Test" doc:id="2fdb2892-d840-4b70-bcd1-eaa48d60be15">
+        <munit:enable-flow-sources>
             <munit:enable-flow-source value="system-api-main" />
             <munit:enable-flow-source value="delete:\accounts\(id):system-api-config" />
         </munit:enable-flow-sources>
-        <munit:behavior>
-                <munit-tools:mock-when doc:name="Mock 'SELECT Account with specific ID'" doc:id="8b7b62ac-d772-4cbd-9671-ae7f41707f0b" processor=".*:.*">
-                    <munit-tools:with-attributes>
-                        <munit-tools:with-attribute attributeName="doc:name" whereValue="SELECT Account with specific ID" />
-                    </munit-tools:with-attributes>
-                    <munit-tools:then-return>
-                    <munit-tools:payload value='#[["5261bb4e-f9e3-4f48-93ae-bd68e424daf3"]]' />
-
-                    </munit-tools:then-return>
-                </munit-tools:mock-when>
-			<munit-tools:mock-when doc:name="Mock 'DELETE Account'" doc:id="8b7b62ac-d772-4cbd-9671-ae7f41707f0b" processor=".*:.*" >
-				<munit-tools:with-attributes >
-					<munit-tools:with-attribute attributeName="doc:name" whereValue="DELETE Account" />
-				</munit-tools:with-attributes>
-				<munit-tools:then-return >
-					<munit-tools:payload value='#[1]' />
-				</munit-tools:then-return>
-			</munit-tools:mock-when>
-            
-</munit:behavior>
-            <munit:execution>
-            <http:request method="DELETE" doc:name="HTTP DELETE Request" doc:id="b694dd1f-097c-4c64-b582-5910a2dcc675" config-ref="HTTP_Request_Configuration" path="/accounts/{id}">
-                    <http:uri-params><![CDATA[#[output applicaton/java
+        <munit:execution>
+            <flow-ref doc:name="insertTestingAccountIntoDB" doc:id="e0960eb3-06fe-4855-928b-d9bc7b2de235" name="insertTestingAccountIntoDB" />
+            <http:request method="DELETE" doc:name="HTTP DELETE Request" doc:id="c72c77bd-9c62-4327-b3b0-8d3e643d0903"
+                config-ref="HTTP_Request_Configuration" path="/accounts/{id}">
+                <http:uri-params><![CDATA[#[output applicaton/java
 ---
 {
 	"id" : "5261bb4e-f9e3-4f48-93ae-bd68e424daf3"
 }]]]></http:uri-params>
-                </http:request>
-            </munit:execution>
-            <munit:validation>
-                <munit-tools:assert-that doc:name="Assert that http.status eq 200" doc:id="1449487c-a810-4919-a567-a09780f6414c" expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(200)]" message="The HTTP Status code is not correct!" />
-            </munit:validation>
-        </munit:test>
-                <munit:test name="test-suite-delete:accounts_id:system-api-configTest-not-found" description="MUnit Test" doc:id="2fdb2892-d840-4b70-bcd1-eaa48d60be13" expectedErrorType="HTTP:NOT_FOUND">
-        <munit:enable-flow-sources >
+            </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that doc:name="Assert that http.status eq 200" doc:id="1449487c-a810-4919-a567-a09780f6414c"
+                expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(200)]" message="The HTTP Status code is not correct!" />
+            <db:select doc:name="SELECT Accounts" doc:id="d28f6b8b-ffcb-46cd-975f-886c526abea8" config-ref="Database_Config">
+                <db:sql>SELECT * FROM Account;</db:sql>
+            </db:select>
+            <munit-tools:assert-that doc:name="There should be no account in the DB" doc:id="31629a80-e718-44ad-ad25-be2dcd4fa769"
+                expression="#[sizeOf(payload)]" is="#[MunitTools::equalTo(0)]" message="There should be no account in the DB" />
+        </munit:validation>
+    </munit:test>
+    <munit:test name="test-suite-delete:accounts_id:system-api-configTest-not-found" description="MUnit Test"
+        doc:id="2fdb2892-d840-4b70-bcd1-eaa48d60be13" expectedErrorType="HTTP:NOT_FOUND">
+        <munit:enable-flow-sources>
             <munit:enable-flow-source value="system-api-main" />
             <munit:enable-flow-source value="delete:\accounts\(id):system-api-config" />
         </munit:enable-flow-sources>
-        <munit:behavior>
-                <munit-tools:mock-when doc:name="Mock 'SELECT Account with specific ID'" doc:id="8b7b62ac-d772-4cbd-9671-ae7f41707f0b" processor=".*:.*">
-                    <munit-tools:with-attributes>
-                        <munit-tools:with-attribute attributeName="doc:name" whereValue="SELECT Account with specific ID" />
-                    </munit-tools:with-attributes>
-                    <munit-tools:then-return>
-					<munit-tools:payload value="#[[]]" />
-
-                    </munit-tools:then-return>
-                </munit-tools:mock-when>
-            </munit:behavior>
-            <munit:execution>
-            <http:request method="DELETE" doc:name="HTTP DELETE Request" doc:id="b694dd1f-097c-4c64-b582-5910a2dcc675" config-ref="HTTP_Request_Configuration" path="/accounts/{id}">
-                    <http:uri-params><![CDATA[#[output applicaton/java
+        <munit:execution>
+            <http:request method="DELETE" doc:name="HTTP DELETE Request" doc:id="b694dd1f-097c-4c64-b582-5910a2dcc675"
+                config-ref="HTTP_Request_Configuration" path="/accounts/{id}">
+                <http:uri-params><![CDATA[#[output applicaton/java
 ---
 {
 	"id" : "12345abc"
 }]]]></http:uri-params>
-                </http:request>
-            </munit:execution>
-            <munit:validation>
-                <munit-tools:assert-that doc:name="Assert that http.status eq 404" doc:id="1449487c-a810-4919-a567-a09780f6414c" expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(404)]" message="The HTTP Status code is not correct!" />
-            </munit:validation>
-        </munit:test>
+            </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that doc:name="Assert that http.status eq 404" doc:id="1449487c-a810-4919-a567-a09780f6414c"
+                expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(404)]" message="The HTTP Status code is not correct!" />
+        </munit:validation>
+    </munit:test>
+    <sub-flow name="insertTestingAccountIntoDB" doc:id="51f69125-ed0d-49fa-937f-2d45e1145d01">
+        <ee:transform doc:name="Prepare data for DB" doc:id="7bb9fd0c-4f3b-4510-96d9-ac0388d06c2d">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+{
+	"Id" : "5261bb4e-f9e3-4f48-93ae-bd68e424daf3",
+	"NativeId": "1a2b3c4d",
+	"Name": "Eduard Walker",
+	"Phone": "1-(318)596-8473",
+	"Email": "ewalker0@liveinternet.ru",
+	"billingAddress": {
+		"street": "Pleasure 4598",
+		"city": "Shreveport",
+		"state": "Louisiana",
+		"postalCode": "71105",
+		"country": "United States"
+	},
+	"shippingAddress": {
+		"street": "Autumn Leaf 3",
+		"city": "Jackson",
+		"state": "Mississippi",
+		"postalCode": "39204",
+		"country": "United States"
+	}
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+        <db:insert doc:name="INSERT testing Account" doc:id="5d7d0626-4868-4282-be6b-34850863d844" config-ref="Database_Config">
+            <db:sql>INSERT INTO Account (
+                Id,
+                NativeId,
+                BillingCity,
+                BillingCountry,
+                BillingPostalCode,
+                BillingState,
+                BillingStreet,
+                Phone,
+                Email,
+                LastModifiedDate,
+                LastModifiedById,
+                Name,
+                ShippingCity,
+                ShippingCountry,
+                ShippingPostalCode,
+                ShippingState,
+                ShippingStreet
+                ) VALUES (
+                :id,
+                :nativeId,
+                :billingCity,
+                :billingCountry,
+                :billingPostalCode,
+                :billingState,
+                :billingStreet,
+                :phone,
+                :email,
+                CURRENT_TIMESTAMP(),
+                CURRENT_USER(),
+                :name,
+                :shippingCity,
+                :shippingCountry,
+                :shippingPostalCode,
+                :shippingState,
+                :shippingStreet
+                )
+            </db:sql>
+            <db:input-parameters><![CDATA[#[{
+	'id': payload.Id,
+    'nativeId': payload.NativeId,
+	'billingCity': payload.BillingCity,
+	'billingCountry': payload.BillingCountry,
+	'billingPostalCode': payload.BillingPostalCode,
+	'billingState': payload.BillingState,
+	'billingStreet': payload.BillingStreet,
+	'phone': payload.Phone,
+    'email': payload.Email,
+	'name': payload.Name,
+	'shippingCity': payload.ShippingCity,
+	'shippingCountry': payload.ShippingCountry,
+	'shippingPostalCode': payload.ShippingPostalCode,
+	'shippingState': payload.ShippingState,
+	'shippingStreet': payload.ShippingStreet
+}]]]></db:input-parameters>
+        </db:insert>
+    </sub-flow>
 </mule>
