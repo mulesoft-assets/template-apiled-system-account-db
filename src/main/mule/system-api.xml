@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:cluster="http://www.mulesoft.org/schema/mule/ee/cluster" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+    xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" 
+    xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+    xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+     http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+      http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">  
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
     <http:listener-config name="system-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${http.port}" />
     </http:listener-config>
-    <apikit:config name="system-api-config" raml="system-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router">
-		<apikit:flow-mappings >
-			<apikit:flow-mapping resource="/accounts" action="get" flow-ref="get:\accounts:system-api-config" />
-			<apikit:flow-mapping resource="/accounts/{id}" action="get" flow-ref="get:\accounts\(id):system-api-config" />
-			<apikit:flow-mapping resource="/accounts" action="post" flow-ref="post:\accounts:application\json:system-api-config" />
-			<apikit:flow-mapping resource="/accounts/{id}" action="put" flow-ref="put:\accounts\(id):application\json:system-api-config" />
-			<apikit:flow-mapping resource="/accounts/{id}" action="delete" flow-ref="delete:\accounts\(id):system-api-config" />
-		</apikit:flow-mappings>
-	</apikit:config>
-	<db:config name="Database_Config" doc:name="Database Config" doc:id="f75ca3de-9f51-4f8e-8518-14aea2af9c78" >
-		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.user}" password="${db.password}" database="${db.name}" />
-	</db:config>
-	<configuration-properties file="mule-artifact.properties" doc:name="Configuration properties" doc:id="9ceefa30-f66a-478f-94e3-561022a09610" />
-	<configuration-properties file="common.properties" doc:name="Configuration properties" doc:id="fb6ccc25-3b1e-4ce3-9129-39d7cd3995d2" />
-	<configuration-properties file="mule.${mule.env}.properties" doc:name="Configuration properties" doc:id="320d97b0-24fa-4733-8a23-7746b800ae6b" />
-	<flow name="system-api-main">
+    <apikit:config name="system-api-config" raml="system-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"
+        doc:name="Router">
+        <apikit:flow-mappings>
+            <apikit:flow-mapping resource="/accounts" action="get" flow-ref="get:\accounts:system-api-config" />
+            <apikit:flow-mapping resource="/accounts/{id}" action="get" flow-ref="get:\accounts\(id):system-api-config" />
+            <apikit:flow-mapping resource="/accounts" action="post" flow-ref="post:\accounts:application\json:system-api-config" />
+            <apikit:flow-mapping resource="/accounts/{id}" action="put"
+                flow-ref="put:\accounts\(id):application\json:system-api-config" />
+            <apikit:flow-mapping resource="/accounts/{id}" action="delete" flow-ref="delete:\accounts\(id):system-api-config" />
+        </apikit:flow-mappings>
+    </apikit:config>
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="f75ca3de-9f51-4f8e-8518-14aea2af9c78">
+        <db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.user}" password="${db.password}" database="${db.name}" />
+    </db:config>
+
+    <configuration-properties file="mule-artifact.properties" doc:name="Configuration properties" doc:id="9ceefa30-f66a-478f-94e3-561022a09610" />
+    <configuration-properties file="common.properties" doc:name="Configuration properties" doc:id="fb6ccc25-3b1e-4ce3-9129-39d7cd3995d2" />
+    <configuration-properties file="mule.${mule.env}.properties" doc:name="Configuration properties" doc:id="320d97b0-24fa-4733-8a23-7746b800ae6b" />
+    <flow name="system-api-main">
         <http:listener config-ref="system-api-httpListenerConfig" path="/api/*" doc:name="Listener">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
@@ -30,10 +39,11 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="system-api-config" doc:name="APIkit Router"/>
+        <apikit:router config-ref="system-api-config" doc:name="APIkit Router" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+                    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -46,7 +56,8 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+                    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -59,7 +70,8 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+                    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -72,7 +84,8 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+                    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -85,7 +98,8 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+                    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -98,7 +112,8 @@ output application/json
                 </ee:transform>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+                    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -113,11 +128,13 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\accounts:system-api-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="Build whereClause as string in flowVar">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+            xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+            doc:name="Build whereClause as string" doc:id="21f595cf-5fad-4382-817e-f309359f0705">
             <ee:message>
             </ee:message>
-			<ee:variables>
-				<ee:set-variable variableName="whereClause"><![CDATA[%dw 2.0
+            <ee:variables>
+                <ee:set-variable variableName="whereClause"><![CDATA[%dw 2.0
 import global::Commons
 output application/java
 var fields = {     
@@ -143,14 +160,16 @@ using (params = attributes.queryParams)
 pluck $
 joinBy ' '
 ]]></ee:set-variable>
-			</ee:variables>
+            </ee:variables>
         </ee:transform>
-		<db:select config-ref="Database_Config" doc:name="SELECT Accounts" doc:id="1753eaec-0e48-4cb5-9676-44765b56983c" >
-			<db:sql >#[&quot;SELECT Id, NativeId, Name, Phone, Email, BillingStreet, BillingCity, BillingPostalCode, BillingState, BillingCountry, ShippingStreet, ShippingCity, ShippingPostalCode, ShippingState, ShippingCountry, LastModifiedDate, LastModifiedById FROM Account WHERE Id LIKE '%' &quot;++ vars.whereClause]</db:sql>
-		</db:select>
-		<ee:transform doc:name="DB Account to sAPI Account" doc:id="47dbbdeb-e269-4872-bd25-051936089541" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+        <db:select config-ref="Database_Config" doc:name="SELECT Accounts" doc:id="1753eaec-0e48-4cb5-9676-44765b56983c">
+            <db:sql>#[&quot;SELECT Id, NativeId, Name, Phone, Email, BillingStreet, BillingCity, BillingPostalCode, BillingState,
+                BillingCountry, ShippingStreet, ShippingCity, ShippingPostalCode, ShippingState, ShippingCountry, LastModifiedDate,
+                LastModifiedById FROM Account WHERE Id LIKE '%' &quot;++ vars.whereClause]</db:sql>
+        </db:select>
+        <ee:transform doc:name="DB Account to sAPI Account" doc:id="47dbbdeb-e269-4872-bd25-051936089541">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 payload map {
@@ -176,14 +195,16 @@ payload map {
 	lastModifiedDate    : $.LastModifiedDate,
 	LastModifiedById	: $.LastModifiedById
 }]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+            </ee:message>
+        </ee:transform>
     </flow>
-	<flow name="post:\accounts:application\json:system-api-config">
-        <set-variable variableName="id" value="#[uuid()]" doc:name="Compute ID" doc:id="418a4a81-d555-4ea1-aecb-5a2bcc4b9d3d"/>
-		<ee:transform doc:name="Map input to table Account" doc:id="182483b7-b5c8-434c-8864-d7cfbbc6ef39" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+    <flow name="post:\accounts:application\json:system-api-config">
+        <set-variable variableName="id" value="#[uuid()]" doc:name="Compute ID" doc:id="418a4a81-d555-4ea1-aecb-5a2bcc4b9d3d" />
+        <ee:transform doc:name="Map input to table Account" doc:id="182483b7-b5c8-434c-8864-d7cfbbc6ef39">
+            <ee:message>
+            </ee:message>
+            <ee:variables>
+                <ee:set-variable variableName="account"><![CDATA[%dw 2.0
 output application/java
 ---
 {
@@ -202,96 +223,103 @@ output application/java
 	ShippingCountry    : payload.shippingAddress.country,
 	Phone              : payload.phone,
 	Email              : payload.email
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<db:insert config-ref="Database_Config" doc:name="INSERT Account" doc:id="55561fd4-4b18-4440-843f-e8eda213676a" target="insertResult">
-			<db:sql >INSERT INTO Account (
-	Id,
-	NativeId,
-	BillingCity,
-	BillingCountry,
-	BillingPostalCode,
-	BillingState,
-	BillingStreet,
-	Phone,
-	Email,
-	LastModifiedDate,
-	LastModifiedById,
-	Name,
-	ShippingCity,
-	ShippingCountry,
-	ShippingPostalCode,
-	ShippingState,
-	ShippingStreet
-) VALUES (
-	:id,
-	:nativeId,
-	:billingCity,
-	:billingCountry,
-	:billingPostalCode,
-	:billingState,
-	:billingStreet,
-	:phone,
-	:email,
-	CURRENT_TIMESTAMP(),
-	CURRENT_USER(),
-	:name,
-	:shippingCity,
-	:shippingCountry,
-	:shippingPostalCode,
-	:shippingState,
-	:shippingStreet
-)</db:sql>
-			<db:input-parameters ><![CDATA[#[{
-	'id': payload['Id'],
-	'nativeId': payload['NativeId'],
-	'billingCity': payload['BillingCity'],
-	'billingCountry': payload['BillingCountry'],
-	'billingPostalCode': payload['BillingPostalCode'],
-	'billingState': payload['BillingState'],
-	'billingStreet': payload['BillingStreet'],
-	'phone': payload['Phone'],
-    'email': payload['Email'],
-	'name': payload['Name'],
-	'shippingCity': payload['ShippingCity'],
-	'shippingCountry': payload['ShippingCountry'],
-	'shippingPostalCode': payload['ShippingPostalCode'],
-	'shippingState': payload['ShippingState'],
-	'shippingStreet': payload['ShippingStreet']
+}]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <db:insert config-ref="Database_Config" doc:name="INSERT Account" doc:id="55561fd4-4b18-4440-843f-e8eda213676a">
+            <db:sql>INSERT INTO Account (
+                Id,
+                NativeId,
+                BillingCity,
+                BillingCountry,
+                BillingPostalCode,
+                BillingState,
+                BillingStreet,
+                Phone,
+                Email,
+                LastModifiedDate,
+                LastModifiedById,
+                Name,
+                ShippingCity,
+                ShippingCountry,
+                ShippingPostalCode,
+                ShippingState,
+                ShippingStreet
+                ) VALUES (
+                :id,
+                :nativeId,
+                :billingCity,
+                :billingCountry,
+                :billingPostalCode,
+                :billingState,
+                :billingStreet,
+                :phone,
+                :email,
+                CURRENT_TIMESTAMP(),
+                CURRENT_USER(),
+                :name,
+                :shippingCity,
+                :shippingCountry,
+                :shippingPostalCode,
+                :shippingState,
+                :shippingStreet
+                )</db:sql>
+            <db:input-parameters><![CDATA[#[{
+	'id': vars.account.Id,
+	'nativeId': vars.account.NativeId,
+	'billingCity': vars.account.BillingCity,
+	'billingCountry': vars.account.BillingCountry,
+	'billingPostalCode': vars.account.BillingPostalCode,
+	'billingState': vars.account.BillingState,
+	'billingStreet': vars.account.BillingStreet,
+	'phone': vars.account.Phone,
+    'email': vars.account.Email,
+	'name': vars.account.Name,
+	'shippingCity': vars.account.ShippingCity,
+	'shippingCountry': vars.account.ShippingCountry,
+	'shippingPostalCode': vars.account.ShippingPostalCode,
+	'shippingState': vars.account.ShippingState,
+	'shippingStreet': vars.account.ShippingStreet
 }]]]></db:input-parameters>
-		</db:insert>
-		<choice doc:name="Was Account inserted?" doc:id="3687dda5-5df4-4f73-adba-a08d728955d3" >
-			<when expression="#[vars.insertResult.affectedRows == 1]" >
-				<set-variable variableName="outboundHeaders" value="#[{ 'Location':'http://${api.domain}:${http.port}/api/accounts/' ++ vars.id }]" doc:name="Set Location header" doc:id="c9ba022c-5e45-4dca-a353-e5df91ce3625" />
-				<ee:transform doc:name="Build Response" doc:id="324c2f22-500d-4f7d-9f64-cacc23e39ca8" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+        </db:insert>
+        <choice doc:name="Was Account inserted?" doc:id="3687dda5-5df4-4f73-adba-a08d728955d3">
+            <when expression="#[payload.affectedRows == 1]">
+                <set-variable variableName="outboundHeaders"
+                    value="#[{ 'Location':'http://${api.domain}:${http.port}${api.basePath}/accounts/' ++ vars.id }]" doc:name="Set Location header"
+                    doc:id="c9ba022c-5e45-4dca-a353-e5df91ce3625" />
+                <ee:transform doc:name="Build Response" doc:id="324c2f22-500d-4f7d-9f64-cacc23e39ca8">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
 	id: vars.id,
-	name: payload.Name
+	name: vars.account.Name
 }]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-			</when>
-			<otherwise >
-				<set-variable variableName="httpStatus" value="400" doc:name="Bad Request" doc:id="bf0bec3a-9ec6-41a4-9d39-5e2c77b48000" />
-				<set-payload value='{ "message": "Failed to create new Account" }' doc:name="Failed to create account" doc:id="34d0fc60-bd59-463b-a61a-66f309a49d06" mimeType="application/json"/>
-			</otherwise>
-		</choice>
+                    </ee:message>
+                </ee:transform>
+            </when>
+            <otherwise>
+                <set-variable variableName="httpStatus" value="400" doc:name="Bad Request" doc:id="bf0bec3a-9ec6-41a4-9d39-5e2c77b48000" />
+                <set-payload value='{ "message": "Failed to create new Account" }' doc:name="Failed to create account"
+                    doc:id="34d0fc60-bd59-463b-a61a-66f309a49d06" mimeType="application/json" />
+            </otherwise>
+        </choice>
     </flow>
-	<flow name="get:\accounts\(id):system-api-config">
-		<db:select config-ref="Database_Config" doc:name="Select Account" doc:id="a7333a61-74d0-48c7-bc5a-afedc6fd8f91" >
-			<db:sql >SELECT Id, NativeId, Name, Phone, Email, BillingStreet, BillingCity, BillingPostalCode, BillingState, BillingCountry, ShippingStreet, ShippingCity, ShippingPostalCode, ShippingState, ShippingCountry, LastModifiedDate, LastModifiedById FROM Account WHERE Id = :id</db:sql>
-			<db:input-parameters ><![CDATA[#[{'id': attributes.uriParams.id }]]]></db:input-parameters>
-		</db:select>
-		<choice doc:name="Does the Account exist?" doc:id="5a05a9ac-039d-4e48-9d9f-23625a748a09" >
-			<when expression="#[sizeOf(payload) &gt; 0]" >
-				<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="DB Account to sAPI Account">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
+    <flow name="get:\accounts\(id):system-api-config">
+        <db:select config-ref="Database_Config" doc:name="Select Account" doc:id="a7333a61-74d0-48c7-bc5a-afedc6fd8f91">
+            <db:sql>SELECT Id, NativeId, Name, Phone, Email, BillingStreet, BillingCity, BillingPostalCode, BillingState, BillingCountry,
+                ShippingStreet, ShippingCity, ShippingPostalCode, ShippingState, ShippingCountry, LastModifiedDate, LastModifiedById FROM
+                Account WHERE Id = :id</db:sql>
+            <db:input-parameters><![CDATA[#[{'id': attributes.uriParams.id }]]]></db:input-parameters>
+        </db:select>
+        <choice doc:name="Does the Account exist?" doc:id="5a05a9ac-039d-4e48-9d9f-23625a748a09">
+            <when expression="#[sizeOf(payload) &gt; 0]">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+                    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+                    doc:name="DB Account to sAPI Account" doc:id="d770e74b-af91-4569-892d-6d28d9ecdadc">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -317,26 +345,28 @@ output application/json
 	lastModifiedDate    : payload[0].LastModifiedDate,
 	lastModifiedById    : payload[0].LastModifiedById
 }]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-			</when>
-			<otherwise >
-				<set-variable variableName="httpStatus" value="404" doc:name="Set HTTP Status" doc:id="7193c636-234b-4709-bcfb-8b8438030244" />
-				<set-payload value='{ "message": "Account with the given ID not found" }' doc:name="Account not found" doc:id="c1436b72-01ec-4b54-a86d-ffe219bd418a" mimeType="application/json"/>
-			</otherwise>
-		</choice>
+                    </ee:message>
+                </ee:transform>
+            </when>
+            <otherwise>
+                <set-variable variableName="httpStatus" value="404" doc:name="Set HTTP Status" doc:id="7193c636-234b-4709-bcfb-8b8438030244" />
+                <set-payload value='{ "message": "Account with the given ID not found" }' doc:name="Account not found"
+                    doc:id="c1436b72-01ec-4b54-a86d-ffe219bd418a" mimeType="application/json" />
+            </otherwise>
+        </choice>
     </flow>
-	<flow name="put:\accounts\(id):application\json:system-api-config">
-<!--         <set-variable variableName="requestPayload" value="#[payload]" doc:name="Store data into variable requestPayload" doc:id="5bfda460-3a68-4205-adff-1a1655248869" encoding="UTF-8" mimeType="application/json"/> -->
-		<db:select config-ref="Database_Config" doc:name="SELECT Account" doc:id="760ca524-3bb4-4a02-9c29-9c86362e7e81" target="recordFromSfdc">
-			<db:sql >SELECT Id FROM Account WHERE Id = :id</db:sql>
-			<db:input-parameters ><![CDATA[#[{'id': attributes.uriParams.id }]]]></db:input-parameters>
-		</db:select>
-		<choice doc:name="Does the Account exist?" doc:id="09cf5acf-52d5-4c8c-aef4-2cd18b973401" >
-			<when expression="#[sizeOf(vars.recordFromSfdc) &gt; 0]" >
-				<ee:transform doc:name="sAPI Account to DB Account" doc:id="a3c11697-6ca5-4107-89bf-c0a0aec0780d" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+    <flow name="put:\accounts\(id):application\json:system-api-config">
+        <!-- <set-variable variableName="requestPayload" value="#[payload]" doc:name="Store data into variable requestPayload" doc:id="5bfda460-3a68-4205-adff-1a1655248869" 
+            encoding="UTF-8" mimeType="application/json"/> -->
+        <db:select config-ref="Database_Config" doc:name="SELECT Account" doc:id="760ca524-3bb4-4a02-9c29-9c86362e7e81" target="recordFromDb">
+            <db:sql>SELECT Id FROM Account WHERE Id = :id</db:sql>
+            <db:input-parameters><![CDATA[#[{'id': attributes.uriParams.id }]]]></db:input-parameters>
+        </db:select>
+        <choice doc:name="Does the Account exist?" doc:id="09cf5acf-52d5-4c8c-aef4-2cd18b973401">
+            <when expression="#[sizeOf(vars.recordFromDb) &gt; 0]">
+                <ee:transform doc:name="sAPI Account to DB Account" doc:id="a3c11697-6ca5-4107-89bf-c0a0aec0780d">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/java
 ---
 {
@@ -355,26 +385,27 @@ output application/java
 	Phone             : payload.phone,
 	Email             : payload.email
 }]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-				<db:update config-ref="Database_Config" doc:name="UPDATE Account" doc:id="02dbc033-201f-4bea-9e82-0b01395d0c47" >
-					<db:sql >UPDATE Account 
-SET 
-	Name               = :name,
-	BillingStreet      = :billingStreet,
-	BillingCity        = :billingCity,
-	BillingState       = :billingState,
-	BillingPostalCode  = :billingPostalCode,
-	BillingCountry     = :billingCountry,
-	ShippingStreet     = :shippingStreet,
-	ShippingCity       = :shippingCity,
-	ShippingState      = :shippingState,
-	ShippingPostalCode = :shippingPostalCode,
-	ShippingCountry    = :shippingCountry,
-	Phone              = :phone,
-	Email = :email
-WHERE Id = :id</db:sql>
-					<db:input-parameters ><![CDATA[#[{
+                    </ee:message>
+                </ee:transform>
+                <db:update config-ref="Database_Config" doc:name="UPDATE Account" doc:id="02dbc033-201f-4bea-9e82-0b01395d0c47">
+                    <db:sql>UPDATE Account
+                        SET
+                        Name = :name,
+                        BillingStreet = :billingStreet,
+                        BillingCity = :billingCity,
+                        BillingState = :billingState,
+                        BillingPostalCode = :billingPostalCode,
+                        BillingCountry = :billingCountry,
+                        ShippingStreet = :shippingStreet,
+                        ShippingCity = :shippingCity,
+                        ShippingState = :shippingState,
+                        ShippingPostalCode = :shippingPostalCode,
+                        ShippingCountry = :shippingCountry,
+                        Phone = :phone,
+                        Email = :email
+                        WHERE Id = :id
+                    </db:sql>
+                    <db:input-parameters><![CDATA[#[{
 	'id': payload['Id'],
 	'billingCity': payload['BillingCity'],
 	'billingCountry': payload['BillingCountry'],
@@ -390,57 +421,67 @@ WHERE Id = :id</db:sql>
 	'shippingState': payload['ShippingState'],
 	'shippingStreet': payload['ShippingStreet']
 }]]]></db:input-parameters>
-				</db:update>
-				<choice doc:name="Has the Account been updated?" doc:id="5a1af49a-49e6-413d-b608-c887c3cc006f" >
-					<when expression="#[payload.affectedRows == 1]" >
-						<logger level="INFO" doc:name="Log the UPDATE" doc:id="b9a7f8f5-c4e6-4a60-a947-7d692a8d6c81" message="#['UPDATE: ' ++ write(payload, 'application/json', {'indent': 'false'})]"/>
-						<set-payload value='{
+                </db:update>
+                <choice doc:name="Has the Account been updated?" doc:id="5a1af49a-49e6-413d-b608-c887c3cc006f">
+                    <when expression="#[payload.affectedRows == 1]">
+                        <logger level="INFO" doc:name="Log the UPDATE" doc:id="b9a7f8f5-c4e6-4a60-a947-7d692a8d6c81"
+                            message="#['UPDATE: ' ++ write(payload, 'application/json', {'indent': 'false'})]" />
+                        <set-payload value='{
 	"status": "OK"
-}' doc:name="Set Response" doc:id="e4600b68-beec-401c-9a60-29c7852e1f98" mimeType="application/json"/>
-					</when>
-					<otherwise >
-						<set-variable variableName="httpStatus" value="400" doc:name="Bad Request" doc:id="30fbb471-eeb7-4482-8c46-94a0b16c46ac" />
-						<set-payload value='{ "message": "Failed to update Account" }' doc:name="Bad Request" doc:id="bb08d3e4-d960-4419-81b4-a23bb7496b08" />
-					</otherwise>
-				</choice>
-			</when>
-			<otherwise >
-				<set-variable variableName="httpStatus" value="404" doc:name="Resource Not Found" doc:id="804437aa-f1ef-4c49-a16d-53bcf248e0c0" />
-				<set-payload value='{ "message": "Acount with the given ID not found" }' doc:name="Resource not found" doc:id="2b8faf11-eecb-4d9f-bae0-3337deb39d14" />
-			</otherwise>
-		</choice>
+}' doc:name="Set Response" doc:id="e4600b68-beec-401c-9a60-29c7852e1f98"
+                            mimeType="application/json" />
+                    </when>
+                    <otherwise>
+                        <set-variable variableName="httpStatus" value="400" doc:name="Bad Request" doc:id="30fbb471-eeb7-4482-8c46-94a0b16c46ac" />
+                        <set-payload value='{ "message": "Failed to update Account" }' doc:name="Bad Request"
+                            doc:id="bb08d3e4-d960-4419-81b4-a23bb7496b08" />
+                    </otherwise>
+                </choice>
+            </when>
+            <otherwise>
+                <set-variable variableName="httpStatus" value="404" doc:name="Resource Not Found" doc:id="804437aa-f1ef-4c49-a16d-53bcf248e0c0" />
+                <set-payload value='{ "message": "Acount with the given ID not found" }' doc:name="Resource not found"
+                    doc:id="2b8faf11-eecb-4d9f-bae0-3337deb39d14" />
+            </otherwise>
+        </choice>
     </flow>
-	<flow name="delete:\accounts\(id):system-api-config">
-        <db:select config-ref="Database_Config" doc:name="SELECT Account with specific ID" doc:id="f0637064-b1af-4c22-b811-1c5bf8a5ad1c" target="recordFromSfdc">
-			<db:sql >SELECT Id FROM Account WHERE Id = :id</db:sql>
-			<db:input-parameters ><![CDATA[#[{'id': attributes.uriParams.id }]]]></db:input-parameters>
-		</db:select>
-		<choice doc:name="Does the Account exist?" doc:id="412cc04f-3953-4ca6-8633-addf0356170f" >
-			<when expression="sizeOf(vars.recordFromSfdc) &gt; 0" >
-				<db:delete config-ref="Database_Config" doc:name="DELETE Account" doc:id="36546fe5-0f9a-40bf-89fa-104755a7d34c" >
-					<db:sql >DELETE FROM Account WHERE Id = :id</db:sql>
-					<db:input-parameters ><![CDATA[#[{'id': attributes.uriParams.id }]]]></db:input-parameters>
-				</db:delete>
-				<choice doc:name="Has the Account been deleted?" doc:id="5ecd780e-b1ca-43a9-94a9-804dfc4a204e" >
-					<when expression="#[payload == 1]" >
-						<logger level="INFO" doc:name="Log DELETE" doc:id="0ffe3c29-7236-4913-8969-6cb3de43edd1" message="#['DELETE: ' ++ write(payload, 'application/json', {'indent': 'false'})]"/>
-						<set-payload value='{
+    <flow name="delete:\accounts\(id):system-api-config">
+        <set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable" doc:id="51ddb5a1-90ae-4643-93dc-a009a1de2cde"
+            variableName="accountId" />
+        <db:select config-ref="Database_Config" doc:name="SELECT Account with specific ID" doc:id="f0637064-b1af-4c22-b811-1c5bf8a5ad1c">
+            <db:sql>SELECT Id FROM Account WHERE Id = :id</db:sql>
+            <db:input-parameters><![CDATA[#[{'id': vars.accountId}]]]></db:input-parameters>
+        </db:select>
+        <choice doc:name="Does the Account exist?" doc:id="412cc04f-3953-4ca6-8633-addf0356170f">
+            <when expression="sizeOf(payload) &gt; 0">
+                <db:delete config-ref="Database_Config" doc:name="DELETE Account" doc:id="36546fe5-0f9a-40bf-89fa-104755a7d34c">
+                    <db:sql>DELETE FROM Account WHERE Id = :id</db:sql>
+                    <db:input-parameters><![CDATA[#[{'id': vars.accountId}]]]></db:input-parameters>
+                </db:delete>
+                <choice doc:name="Has the Account been deleted?" doc:id="5ecd780e-b1ca-43a9-94a9-804dfc4a204e">
+                    <when expression="#[payload == 1]">
+                        <logger level="INFO" doc:name="Log DELETE" doc:id="0ffe3c29-7236-4913-8969-6cb3de43edd1"
+                            message="#['DELETE: ' ++ write(payload, 'application/json', {'indent': 'false'})]" />
+                        <set-payload value='{
 	"status": "OK"
-}' doc:name="Set Response" doc:id="64183b74-2018-4bb3-8a2d-ad2676d423ce" mimeType="application/json"/>
-					</when>
-					<otherwise >
-						<set-variable variableName="httpStatus" value="400" doc:name="Bad Request" doc:id="d5bebf16-8ec9-43d8-8645-9b6159efdfa1" />
-						<set-payload value='{ "message": "Failed to delete Account" }' doc:name="Bad Request" doc:id="350474dd-1505-42b8-851c-9d11928bc3eb" />
-					</otherwise>
-				</choice>
-			</when>
-			<otherwise >
-				<set-variable variableName="httpStatus" value="404" doc:name="Resource Not Found" doc:id="83bde4f3-354a-4375-ace0-6d995dae9425" />
-				<set-payload value='{ "message": "Account with the given ID not found" }' doc:name="Resource not found" doc:id="30a83c70-3e79-4a86-b746-297707f326fa" />
-			</otherwise>
-		</choice>
+}' doc:name="Set Response" doc:id="64183b74-2018-4bb3-8a2d-ad2676d423ce"
+                            mimeType="application/json" />
+                    </when>
+                    <otherwise>
+                        <set-variable variableName="httpStatus" value="400" doc:name="Bad Request" doc:id="d5bebf16-8ec9-43d8-8645-9b6159efdfa1" />
+                        <set-payload value='{ "message": "Failed to delete Account" }' doc:name="Bad Request"
+                            doc:id="350474dd-1505-42b8-851c-9d11928bc3eb" />
+                    </otherwise>
+                </choice>
+            </when>
+            <otherwise>
+                <set-variable variableName="httpStatus" value="404" doc:name="Resource Not Found" doc:id="83bde4f3-354a-4375-ace0-6d995dae9425" />
+                <set-payload value='{ "message": "Account with the given ID not found" }' doc:name="Resource not found"
+                    doc:id="30a83c70-3e79-4a86-b746-297707f326fa" />
+            </otherwise>
+        </choice>
     </flow>
-	<flow name="system-api-console">
+    <flow name="system-api-console">
         <http:listener config-ref="system-api-httpListenerConfig" path="/console/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
@@ -450,10 +491,11 @@ WHERE Id = :id</db:sql>
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:console config-ref="system-api-config" doc:name="APIkit Console"/>
+        <apikit:console config-ref="system-api-config" doc:name="APIkit Console" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+                    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
