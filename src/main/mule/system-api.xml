@@ -26,6 +26,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         <db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.user}" password="${db.password}" database="${db.name}" />
     </db:config>
 
+    <global-property name="mule.env" value="dev" doc:name="Global Property" />
     <configuration-properties file="mule-artifact.properties" doc:name="Configuration properties" doc:id="9ceefa30-f66a-478f-94e3-561022a09610" />
     <configuration-properties file="common.properties" doc:name="Configuration properties" doc:id="fb6ccc25-3b1e-4ce3-9129-39d7cd3995d2" />
     <configuration-properties file="mule.${mule.env}.properties" doc:name="Configuration properties" doc:id="320d97b0-24fa-4733-8a23-7746b800ae6b" />
