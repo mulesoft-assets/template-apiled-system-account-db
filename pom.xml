@@ -49,7 +49,7 @@
                         </formats>
                     </coverage>
                     <dynamicPorts>
-  						<dynamicPort>munit.http.port</dynamicPort>
+  						<dynamicPort>http.port</dynamicPort>
 					</dynamicPorts>
                 </configuration>
             </plugin>
