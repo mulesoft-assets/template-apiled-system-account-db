@@ -18,7 +18,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
         file="mule.test.properties" />
     <http:request-config name="HTTP_Request_Configuration" doc:name="HTTP Request configuration" doc:id="fc3d03c8-d892-46b5-9785-9a513c2a9ed3"
         basePath="${api.basePath}">
-        <http:request-connection host="${api.domain}" port="${http.port}" />
+        <http:request-connection host="${api.domain}" port="${munit.http.port}" />
     </http:request-config>
     <munit:after-test name="test-suiteAfter_Test" description="After tests actions" doc:id="e2229d26-859e-475f-b8e9-4245af8aea0c">
         <db:delete doc:name="DELETE all Accounts" doc:id="26de49f9-dfbc-4748-abd8-564cfbb08dbd" config-ref="Database_Config">
