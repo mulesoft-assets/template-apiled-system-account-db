@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <sub-flow name="getAccountsSubFlow" doc:id="db7639b4-b4b3-467b-9a27-3a794d085ccc">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+            xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+            doc:name="Build whereClause as string" doc:id="97b06e41-6a8f-49e3-99c1-256530a32a01">
+            <ee:message>
+            </ee:message>
+            <ee:variables>
+                <ee:set-variable variableName="whereClause"><![CDATA[%dw 2.0
+import global::Commons
+output application/java
+var fields = {     
+    "name"             : "Name",
+    "lastmodifieddate" : "LastModifiedDate"
+}
+type sqldate = String { format: "YYYY-MM-dd HH:mm:ss" }
+---
+using (params = attributes.queryParams)
+{
+    // filtering
+    (name:            'AND Name LIKE \'%' ++ Commons::escapeSQL(params.name) ++ '%\'') if params.name != null,
+    (modifiedBefore:  'AND LastModifiedDate < \'' ++ (((params.modifiedBefore as DateTime)  >> |+00:00|) as sqldate) ++ '\'') if params.modifiedBefore != null,
+    (modifiedAfter:   'AND LastModifiedDate > \'' ++ (((params.modifiedAfter as DateTime)  >> |+00:00|) as sqldate) ++ '\'') if params.modifiedAfter != null,
+
+    // ordering
+    (orderBy:         'ORDER BY ' ++ fields[(lower(params.orderBy))] ++ (if (params.order != null and params.order == "desc") ' DESC' else " ASC"  )) if params.'orderBy' != null,
+    
+    // pagination
+    (limit:           'LIMIT ' ++ params.maxResults ++ ' OFFSET ' ++ (if (params.offset != null and params.offset >= 0) params.offset else 0)) if params.maxResults != null
+    
+}
+pluck $
+joinBy ' '
+]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <db:select config-ref="Database_Config" doc:name="SELECT Accounts" doc:id="7f00ee65-d6c8-4d22-832e-0a4877dc2a2d">
+            <db:sql>#[&quot;SELECT Id, NativeId, Name, Phone, Email, BillingStreet, BillingCity, BillingPostalCode, BillingState,
+                BillingCountry, ShippingStreet, ShippingCity,
+                ShippingPostalCode, ShippingState, ShippingCountry, LastModifiedDate,
+                LastModifiedById FROM Account WHERE Id LIKE '%' &quot;++ vars.whereClause]</db:sql>
+        </db:select>
+        <ee:transform doc:name="DB Account to sAPI Account" doc:id="d24bb463-736d-4ac3-8e78-dd6630c0cf40">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+    id                  : $.Id,
+    nativeId            : $.NativeId,
+    name                : $.Name,
+    email               : $.Email,
+    phone               : $.Phone,
+    billingAddress: {
+        street          : $.BillingStreet,
+        city            : $.BillingCity,
+        state           : $.BillingState,
+        postalCode      : $.BillingPostalCode,
+        country         : $.BillingCountry
+    },
+    shippingAddress: {
+        street          : $.ShippingStreet,
+        city            : $.ShippingCity,
+        state           : $.ShippingState,
+        postalCode      : $.ShippingPostalCode,
+        country         : $.ShippingCountry
+    },  
+    lastModifiedDate    : $.LastModifiedDate,
+    LastModifiedById    : $.LastModifiedById
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </sub-flow>
+    <sub-flow name="getAccountByIdSubFlow" doc:id="a77ab849-b2cf-4e04-9acb-ee3bf8186bdf">
+        <db:select config-ref="Database_Config" doc:name="Select Account" doc:id="1850fe16-98c6-4e2b-bcad-30e1701daefe">
+            <db:sql>SELECT Id, NativeId, Name, Phone, Email, BillingStreet, BillingCity, BillingPostalCode, BillingState, BillingCountry,
+                ShippingStreet, ShippingCity,
+                ShippingPostalCode, ShippingState, ShippingCountry, LastModifiedDate, LastModifiedById FROM
+                Account WHERE Id = :id
+            </db:sql>
+            <db:input-parameters><![CDATA[#[{'id': attributes.uriParams.id }]]]></db:input-parameters>
+        </db:select>
+        <choice doc:name="Does the Account exist?" doc:id="09f5c401-94e2-485f-bf3f-c3aa3baa91d0">
+            <when expression="#[sizeOf(payload) &gt; 0]">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+                    xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
+                    doc:name="DB Account to sAPI Account" doc:id="60634862-23cb-49c8-b75d-7600d4fc88b1">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    id                  : payload[0].Id,
+    nativeId            : payload[0].NativeId,
+    name                : payload[0].Name,
+    email               : payload[0].Email,
+    phone               : payload[0].Phone,
+    billingAddress: {
+        street          : payload[0].BillingStreet,
+        city            : payload[0].BillingCity,
+        state           : payload[0].BillingState,
+        postalCode      : payload[0].BillingPostalCode,
+        country         : payload[0].BillingCountry
+    },
+    shippingAddress: {
+        street          : payload[0].ShippingStreet,
+        city            : payload[0].ShippingCity,
+        state           : payload[0].ShippingState,
+        postalCode      : payload[0].ShippingPostalCode,
+        country         : payload[0].ShippingCountry
+    },  
+    lastModifiedDate    : payload[0].LastModifiedDate,
+    lastModifiedById    : payload[0].LastModifiedById
+}]]></ee:set-payload>
+                    </ee:message>
+                </ee:transform>
+            </when>
+            <otherwise>
+                <set-variable variableName="httpStatus" value="404" doc:name="Set HTTP Status" doc:id="c8a7e831-c2e8-4c46-afd5-e4f7f100f972" />
+                <set-payload value='{ "message": "Account with the given ID not found" }' doc:name="Account not found" doc:id="61eb3edc-ba4b-417d-8323-6a5640161b4f"
+                    mimeType="application/json" />
+            </otherwise>
+        </choice>
+    </sub-flow>
+    <sub-flow name="postAccountSubFlow" doc:id="0eb0906a-094b-4ccd-85c3-0ee50766b99d">
+        <set-variable variableName="id" value="#[uuid()]" doc:name="Compute ID" doc:id="edf5be6f-68b5-4e36-badd-7234e26b4cd5" />
+        <ee:transform doc:name="Map input to table Account" doc:id="48536fb4-1a9b-417f-80ee-22153493c031">
+            <ee:message>
+            </ee:message>
+            <ee:variables>
+                <ee:set-variable variableName="account"><![CDATA[%dw 2.0
+output application/java
+---
+{
+    Id                 : vars.id,
+    NativeId           : payload.nativeId,
+    Name               : payload.name,
+    BillingStreet      : payload.billingAddress.street,
+    BillingCity        : payload.billingAddress.city,
+    BillingState       : payload.billingAddress.state,
+    BillingPostalCode  : payload.billingAddress.postalCode,
+    BillingCountry     : payload.billingAddress.country,
+    ShippingStreet     : payload.shippingAddress.street,
+    ShippingCity       : payload.shippingAddress.city,
+    ShippingState      : payload.shippingAddress.state,
+    ShippingPostalCode : payload.shippingAddress.postalCode,
+    ShippingCountry    : payload.shippingAddress.country,
+    Phone              : payload.phone,
+    Email              : payload.email
+}]]></ee:set-variable>
+            </ee:variables>
+        </ee:transform>
+        <db:insert config-ref="Database_Config" doc:name="INSERT Account" doc:id="2d8c8734-bd11-4f94-9f76-93a5a4ecc350">
+            <db:sql>INSERT INTO Account (
+                Id,
+                NativeId,
+                BillingCity,
+                BillingCountry,
+                BillingPostalCode,
+                BillingState,
+                BillingStreet,
+                Phone,
+                Email,
+                LastModifiedDate,
+                LastModifiedById,
+                Name,
+                ShippingCity,
+                ShippingCountry,
+                ShippingPostalCode,
+                ShippingState,
+                ShippingStreet
+                ) VALUES (
+                :id,
+                :nativeId,
+                :billingCity,
+                :billingCountry,
+                :billingPostalCode,
+                :billingState,
+                :billingStreet,
+                :phone,
+                :email,
+                CURRENT_TIMESTAMP(),
+                CURRENT_USER(),
+                :name,
+                :shippingCity,
+                :shippingCountry,
+                :shippingPostalCode,
+                :shippingState,
+                :shippingStreet
+                )
+            </db:sql>
+            <db:input-parameters><![CDATA[#[{
+    'id': vars.account.Id,
+    'nativeId': vars.account.NativeId,
+    'billingCity': vars.account.BillingCity,
+    'billingCountry': vars.account.BillingCountry,
+    'billingPostalCode': vars.account.BillingPostalCode,
+    'billingState': vars.account.BillingState,
+    'billingStreet': vars.account.BillingStreet,
+    'phone': vars.account.Phone,
+    'email': vars.account.Email,
+    'name': vars.account.Name,
+    'shippingCity': vars.account.ShippingCity,
+    'shippingCountry': vars.account.ShippingCountry,
+    'shippingPostalCode': vars.account.ShippingPostalCode,
+    'shippingState': vars.account.ShippingState,
+    'shippingStreet': vars.account.ShippingStreet
+}]]]></db:input-parameters>
+        </db:insert>
+        <choice doc:name="Was Account inserted?" doc:id="95a36d66-79ac-4a2e-8b2d-48130c2a616f">
+            <when expression="#[payload.affectedRows == 1]">
+                <set-variable variableName="outboundHeaders" value="#[{ 'Location':'http://${api.domain}:${http.port}${api.basePath}/accounts/' ++ vars.id }]"
+                    doc:name="Set Location header" doc:id="c5aa2050-4a02-4f91-aac6-0931177b2699" />
+                <ee:transform doc:name="Build Response" doc:id="76d8af8c-976a-4f5e-80ce-60aa8d9d9419">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    id: vars.id,
+    name: vars.account.Name
+}]]></ee:set-payload>
+                    </ee:message>
+                </ee:transform>
+            </when>
+            <otherwise>
+                <set-variable variableName="httpStatus" value="400" doc:name="Bad Request" doc:id="d6186c1a-672a-4c99-9f10-05a4d093e9d0" />
+                <set-payload value='{ "message": "Failed to create new Account" }' doc:name="Failed to create account" doc:id="b930e364-ac65-49e4-b802-1253e50f6d15"
+                    mimeType="application/json" />
+            </otherwise>
+        </choice>
+    </sub-flow>
+    <sub-flow name="putAccountSubFlow" doc:id="bccef3bb-3852-42d0-b4ac-33f263934e0d">
+        <db:select config-ref="Database_Config" doc:name="SELECT Account" doc:id="e7075a2f-3c96-49bd-9ef1-1f96e9f9cce4" target="recordFromDb">
+            <db:sql>SELECT Id FROM Account WHERE Id = :id</db:sql>
+            <db:input-parameters><![CDATA[#[{'id': attributes.uriParams.id }]]]></db:input-parameters>
+        </db:select>
+        <choice doc:name="Does the Account exist?" doc:id="451602ff-23e0-40f1-a723-87595d20eba8">
+            <when expression="#[sizeOf(vars.recordFromDb) &gt; 0]">
+                <ee:transform doc:name="sAPI Account to DB Account" doc:id="c81dd75e-014c-4a70-a760-48d78340421d">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+{
+    Id                : attributes.uriParams.id,
+    Name              : payload.name,
+    BillingStreet     : payload.billingAddress.street,
+    BillingCity       : payload.billingAddress.city,
+    BillingState      : payload.billingAddress.state,
+    BillingPostalCode : payload.billingAddress.postalCode,
+    BillingCountry    : payload.billingAddress.country,
+    ShippingStreet    : payload.shippingAddress.street,
+    ShippingCity      : payload.shippingAddress.city,
+    ShippingState     : payload.shippingAddress.state,
+    ShippingPostalCode: payload.shippingAddress.postalCode,
+    ShippingCountry   : payload.shippingAddress.country,
+    Phone             : payload.phone,
+    Email             : payload.email
+}]]></ee:set-payload>
+                    </ee:message>
+                </ee:transform>
+                <db:update config-ref="Database_Config" doc:name="UPDATE Account" doc:id="1cb72caa-b254-4b79-a6e5-43d2d542cfb7">
+                    <db:sql>UPDATE Account
+                        SET
+                        Name = :name,
+                        BillingStreet = :billingStreet,
+                        BillingCity = :billingCity,
+                        BillingState = :billingState,
+                        BillingPostalCode =
+                        :billingPostalCode,
+                        BillingCountry = :billingCountry,
+                        ShippingStreet = :shippingStreet,
+                        ShippingCity = :shippingCity,
+                        ShippingState = :shippingState,
+                        ShippingPostalCode = :shippingPostalCode,
+                        ShippingCountry = :shippingCountry,
+                        Phone = :phone,
+                        Email = :email
+                        WHERE Id = :id
+                    </db:sql>
+                    <db:input-parameters><![CDATA[#[{
+    'id': payload['Id'],
+    'billingCity': payload['BillingCity'],
+    'billingCountry': payload['BillingCountry'],
+    'billingPostalCode': payload['BillingPostalCode'],
+    'billingState': payload['BillingState'],
+    'billingStreet': payload['BillingStreet'],
+    'phone': payload['Phone'],
+    'email': payload['Email'],
+    'name': payload['Name'],
+    'shippingCity': payload['ShippingCity'],
+    'shippingCountry': payload['ShippingCountry'],
+    'shippingPostalCode': payload['ShippingPostalCode'],
+    'shippingState': payload['ShippingState'],
+    'shippingStreet': payload['ShippingStreet']
+}]]]></db:input-parameters>
+                </db:update>
+                <choice doc:name="Has the Account been updated?" doc:id="36b258c3-9fed-49bf-9723-9595dd07a1be">
+                    <when expression="#[payload.affectedRows == 1]">
+                        <logger level="INFO" doc:name="Log the UPDATE" doc:id="a5d5a2b0-d2c0-4cf4-97ed-aef541e78caf" message="#['UPDATE: ' ++ write(payload, 'application/json', {'indent': 'false'})]" />
+                        <set-payload value='{
+    "status": "OK"
+}' doc:name="Set Response" doc:id="ef3802c5-9490-4fb9-9bb0-b3e7b7877612" mimeType="application/json" />
+                    </when>
+                    <otherwise>
+                        <set-variable variableName="httpStatus" value="400" doc:name="Bad Request" doc:id="b32c5aa6-19b6-4533-a006-c4f158834dd5" />
+                        <set-payload value='{ "message": "Failed to update Account" }' doc:name="Bad Request" doc:id="ed917e01-edb7-499e-9029-7ca49a2d5742" />
+                    </otherwise>
+                </choice>
+            </when>
+            <otherwise>
+                <set-variable variableName="httpStatus" value="404" doc:name="Resource Not Found" doc:id="5089fbe1-eb65-4d28-92c5-16e5979ead4e" />
+                <set-payload value='{ "message": "Acount with the given ID not found" }' doc:name="Resource not found" doc:id="e966d8e0-d5ba-4c8f-af68-4a6e639005bb" />
+            </otherwise>
+        </choice>
+    </sub-flow>
+    <sub-flow name="deleteAccountSubFlow" doc:id="8ca6a7df-7915-4606-8f56-77bae850b8b0">
+        <set-variable value="#[attributes.uriParams.id]" doc:name="Set Variable" doc:id="84a70401-1499-4ea4-86cf-c7c55c580d9d" variableName="accountId" />
+        <db:select config-ref="Database_Config" doc:name="SELECT Account with specific ID" doc:id="2ceca2ac-5885-4c5b-a426-03ac06e1f45b">
+            <db:sql>SELECT Id FROM Account WHERE Id = :id</db:sql>
+            <db:input-parameters><![CDATA[#[{'id': vars.accountId}]]]></db:input-parameters>
+        </db:select>
+        <choice doc:name="Does the Account exist?" doc:id="b6f015d7-c003-4ece-ae89-0ada214b33d5">
+            <when expression="sizeOf(payload) &gt; 0">
+                <db:delete config-ref="Database_Config" doc:name="DELETE Account" doc:id="411b5fc9-12ff-41df-9317-47995ae7915b">
+                    <db:sql>DELETE FROM Account WHERE Id = :id</db:sql>
+                    <db:input-parameters><![CDATA[#[{'id': vars.accountId}]]]></db:input-parameters>
+                </db:delete>
+                <choice doc:name="Has the Account been deleted?" doc:id="1c7d738e-7d4d-414c-acc7-2f634d1345b2">
+                    <when expression="#[payload == 1]">
+                        <logger level="INFO" doc:name="Log DELETE" doc:id="8e6818db-068b-4f53-8897-0723abdcaed5" message="#['DELETE: ' ++ write(payload, 'application/json', {'indent': 'false'})]" />
+                        <set-payload value='{
+    "status": "OK"
+}' doc:name="Set Response" doc:id="7ab9f6c8-45c7-417b-ac03-335fddb2a255" mimeType="application/json" />
+                    </when>
+                    <otherwise>
+                        <set-variable variableName="httpStatus" value="400" doc:name="Bad Request" doc:id="82a1ad2c-a113-402a-b6f6-f86ff9fcf5ff" />
+                        <set-payload value='{ "message": "Failed to delete Account" }' doc:name="Bad Request" doc:id="2aa0e7fd-c66c-43a7-93a1-42f60e718380" />
+                    </otherwise>
+                </choice>
+            </when>
+            <otherwise>
+                <set-variable variableName="httpStatus" value="404" doc:name="Resource Not Found" doc:id="edc7ee97-4326-465e-9421-095640a77cb3" />
+                <set-payload value='{ "message": "Account with the given ID not found" }' doc:name="Resource not found" doc:id="00764001-86f0-4a2a-b837-86f2fce23412" />
+            </otherwise>
+        </choice>
+    </sub-flow>
+</mule>

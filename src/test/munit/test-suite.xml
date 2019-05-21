@@ -117,7 +117,7 @@ payload map $.id]]></ee:set-payload>
             <munit:enable-flow-source value="get:\accounts\(id):system-api-config" />
         </munit:enable-flow-sources>
         <munit:execution>
-            <flow-ref doc:name="insertTestingAccountIntoDB" doc:id="dc065a2c-69fa-46ff-b897-9e7fa7585a3b" name="insertTestingAccountIntoDB" />
+            <flow-ref doc:name="Call insertTestAccountSubFlow" doc:id="dc065a2c-69fa-46ff-b897-9e7fa7585a3b" name="insertTestAccountSubFlow" />
             <http:request method="GET" doc:name="HTTP GET Request" doc:id="b694dd1f-097c-4c64-b582-5910a2dcc675" config-ref="HTTP_Request_Configuration"
                 path="/accounts/{id}">
                 <http:uri-params><![CDATA[#[output applicaton/java
@@ -248,7 +248,7 @@ payload map $.id]]></ee:set-payload>
             <munit:enable-flow-source value="put:\accounts\(id):application\json:system-api-config" />
         </munit:enable-flow-sources>
         <munit:execution>
-            <flow-ref doc:name="insertTestingAccountIntoDB" doc:id="1e134520-06fc-4407-81c1-b03d8ba79962" name="insertTestingAccountIntoDB" />
+            <flow-ref doc:name="Call insertTestAccountSubFlow" doc:id="1e134520-06fc-4407-81c1-b03d8ba79962" name="insertTestAccountSubFlow" />
             <set-payload
                 value='{
   "name": "Jason Bourne",
@@ -337,7 +337,7 @@ payload map $.id]]></ee:set-payload>
             <munit:enable-flow-source value="delete:\accounts\(id):system-api-config" />
         </munit:enable-flow-sources>
         <munit:execution>
-            <flow-ref doc:name="insertTestingAccountIntoDB" doc:id="e0960eb3-06fe-4855-928b-d9bc7b2de235" name="insertTestingAccountIntoDB" />
+            <flow-ref doc:name="Call insertTestAccountSubFlow" doc:id="e0960eb3-06fe-4855-928b-d9bc7b2de235" name="insertTestAccountSubFlow" />
             <http:request method="DELETE" doc:name="HTTP DELETE Request" doc:id="c72c77bd-9c62-4327-b3b0-8d3e643d0903"
                 config-ref="HTTP_Request_Configuration" path="/accounts/{id}">
                 <http:uri-params><![CDATA[#[output applicaton/java
@@ -378,7 +378,7 @@ payload map $.id]]></ee:set-payload>
                 expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(404)]" message="The HTTP Status code is not correct!" />
         </munit:validation>
     </munit:test>
-    <sub-flow name="insertTestingAccountIntoDB" doc:id="51f69125-ed0d-49fa-937f-2d45e1145d01">
+    <sub-flow name="insertTestAccountSubFlow" doc:id="51f69125-ed0d-49fa-937f-2d45e1145d01">
         <ee:transform doc:name="Prepare data for DB" doc:id="7bb9fd0c-4f3b-4510-96d9-ac0388d06c2d">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
