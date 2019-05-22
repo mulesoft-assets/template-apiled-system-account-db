@@ -3,10 +3,7 @@
 <mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
     <sub-flow name="getAccountsSubFlow" doc:id="db7639b4-b4b3-467b-9a27-3a794d085ccc">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-            xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
-            doc:name="Build whereClause as string" doc:id="97b06e41-6a8f-49e3-99c1-256530a32a01">
+        <ee:transform doc:name="Build whereClause as string" doc:id="97b06e41-6a8f-49e3-99c1-256530a32a01">
             <ee:message>
             </ee:message>
             <ee:variables>
@@ -86,10 +83,7 @@ payload map {
         </db:select>
         <choice doc:name="Does the Account exist?" doc:id="09f5c401-94e2-485f-bf3f-c3aa3baa91d0">
             <when expression="#[sizeOf(payload) &gt; 0]">
-                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-                    xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
-                    doc:name="DB Account to sAPI Account" doc:id="60634862-23cb-49c8-b75d-7600d4fc88b1">
+                <ee:transform doc:name="DB Account to sAPI Account" doc:id="60634862-23cb-49c8-b75d-7600d4fc88b1">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
 output application/json
