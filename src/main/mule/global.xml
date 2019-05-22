@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+    xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <global-property name="mule.env" value="dev" doc:name="Global Property" />
+    
+    <configuration-properties file="common.properties" doc:name="Configuration properties" doc:id="85973580-3944-475e-bb6e-dec19acc40f0" />
+    <configuration-properties file="mule.${mule.env}.properties" doc:name="Configuration properties" doc:id="8acec093-741a-4848-8759-4d6cf5fb5039" />
+    
+    <http:listener-config name="system-api-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${http.port}" />
+    </http:listener-config>
+    
+    <apikit:config name="system-api-config" raml="system-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router">
+        <apikit:flow-mappings>
+            <apikit:flow-mapping resource="/accounts" action="get" flow-ref="get:\accounts:system-api-config" />
+            <apikit:flow-mapping resource="/accounts/{id}" action="get" flow-ref="get:\accounts\(id):system-api-config" />
+            <apikit:flow-mapping resource="/accounts" action="post" flow-ref="post:\accounts:application\json:system-api-config" />
+            <apikit:flow-mapping resource="/accounts/{id}" action="put" flow-ref="put:\accounts\(id):application\json:system-api-config" />
+            <apikit:flow-mapping resource="/accounts/{id}" action="delete" flow-ref="delete:\accounts\(id):system-api-config" />
+        </apikit:flow-mappings>
+    </apikit:config>
+    
+    <db:config name="Database_Config" doc:name="Database Config" doc:id="f7ff8901-5e99-43be-b1da-8c24ae3917d3">
+        <db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.user}" password="${db.password}" database="${db.name}" />
+    </db:config>
+</mule>
