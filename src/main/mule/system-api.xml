@@ -7,7 +7,7 @@
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
     <flow name="system-api-main">
-        <http:listener config-ref="system-api-httpListenerConfig" path="/api/*" doc:name="Listener">
+        <http:listener config-ref="system-api-httpListenerConfig" path="${api.basePath}/*" doc:name="Listener">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
