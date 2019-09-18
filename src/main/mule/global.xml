@@ -15,13 +15,13 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
         <http:listener-connection host="0.0.0.0" port="${http.port}" />
     </http:listener-config>
     
-    <apikit:config name="system-api-config" raml="system-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router">
+    <apikit:config name="system-api-config" raml="system-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router" api="api/template-apiled-system-account-db.raml">
         <apikit:flow-mappings>
-            <apikit:flow-mapping resource="/accounts" action="get" flow-ref="get:\accounts:system-api-config" />
-            <apikit:flow-mapping resource="/accounts/{id}" action="get" flow-ref="get:\accounts\(id):system-api-config" />
-            <apikit:flow-mapping resource="/accounts" action="post" flow-ref="post:\accounts:application\json:system-api-config" />
-            <apikit:flow-mapping resource="/accounts/{id}" action="put" flow-ref="put:\accounts\(id):application\json:system-api-config" />
-            <apikit:flow-mapping resource="/accounts/{id}" action="delete" flow-ref="delete:\accounts\(id):system-api-config" />
+			<apikit:flow-mapping resource="/accounts" action="get" flow-ref="get:\accounts:system-api-config" />
+			<apikit:flow-mapping resource="/accounts/{id}" action="get" flow-ref="get:\accounts\(id):system-api-config" />
+			<apikit:flow-mapping resource="/accounts" action="post" flow-ref="post:\accounts:application\json:system-api-config" />
+			<apikit:flow-mapping resource="/accounts/{id}" action="put" flow-ref="put:\accounts\(id):application\json:system-api-config" />
+			<apikit:flow-mapping resource="/accounts/{id}" action="delete" flow-ref="delete:\accounts\(id):system-api-config" />
         </apikit:flow-mappings>
     </apikit:config>
     
