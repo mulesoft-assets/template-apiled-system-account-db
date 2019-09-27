@@ -7,7 +7,7 @@
         <version>2.1.21</version>
     </parent>
     <artifactId>template-apiled-system-account-db</artifactId>
-    <version>2.1.2-SNAPSHOT</version>
+    <version>2.1.2</version>
     <packaging>mule-application</packaging>
     <name>template-apiled-system-account-db</name>
     <build>
@@ -102,4 +102,4 @@
             <layout>default</layout>
         </repository>
     </repositories>
-<scm><connection>scm:git:git@github.com:mulesoft/template-apiled-system-account-db.git</connection><developerConnection>scm:git:git@github.com:mulesoft/template-apiled-system-account-db.git</developerConnection><url>https://github.com/mulesoft/template-apiled-system-account-db</url><tag>HEAD</tag></scm></project>
+<scm><connection>scm:git:git@github.com:mulesoft/template-apiled-system-account-db.git</connection><developerConnection>scm:git:git@github.com:mulesoft/template-apiled-system-account-db.git</developerConnection><url>https://github.com/mulesoft/template-apiled-system-account-db</url><tag>v2.1.2</tag></scm></project>
