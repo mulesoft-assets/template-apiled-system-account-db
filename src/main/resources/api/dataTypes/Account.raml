@@ -1,5 +1,4 @@
 #%RAML 1.0 DataType
-
 #This file is located at dataTypes/Account.raml
 
 type: object
@@ -9,6 +8,10 @@ properties:
   name?: string
   phone?: string
   email?: string
+  createdDate:
+    type: datetime
+    example: 2016-03-24T14:00:00.000Z
+    required: false
   billingAddress?: address
   shippingAddress?: address
   lastModifiedDate:
