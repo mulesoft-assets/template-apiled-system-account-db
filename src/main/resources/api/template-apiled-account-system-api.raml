@@ -1,9 +1,9 @@
 #%RAML 1.0
-title: Account Database System API
+title: Account System API
 version: v2.0
 baseUri: http://localhost:8081/api
   
-types:
+types: 
   address: !include dataTypes/Address.raml
   account: !include dataTypes/Account.raml
   errorResponse: !include dataTypes/ErrorResponse.raml
@@ -20,13 +20,21 @@ traits:
   get:
     displayName: Get accounts
     description: |
-      Retrieve all the Accounts.
+      Retrieve all Accounts.
     is: [ accountSearch ]
     queryParameters:
       name:
         displayName: The account name
         minLength: 0
         maxLength: 255
+        required: false
+      match:
+        displayName: The account name matching rule
+        description: |
+          The account name matching rule
+        type: string
+        enum: [like, equals]
+        default: equals
         required: false
       modifiedAfter:
         displayName: Only those modified after this date
@@ -61,17 +69,17 @@ traits:
             type: account
             example: |
               {
-                "id": "d7ac7f99-9d66-4f59-af39-d7519b7daad9",
+                "id": "0012000001BaRgPAAV",
                 "name": "Example Company"
               }
       400:
-          body:
-            application/json:
-              type: errorResponse
-              example: |
-                {
-                  "message": "Failed to create new Account"
-                }
+        body:
+          application/json:
+            type: errorResponse
+            example: |
+              {
+                "message": "Failed to create new Account"
+              }
   /{id}:
     description: |
       Working with accounts:
@@ -81,7 +89,8 @@ traits:
     uriParameters:
       id:
         type: string
-        description: Represents the account ID of native system
+        example: 0012000001BaRgPAAV
+        description: Represents the account unique id
     get:
       displayName: Get account by id
       description: Get Account by ID
